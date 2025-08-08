@@ -9,8 +9,9 @@ const AWS_ACCESS_KEY_ID = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.A
 const AWS_SECRET_ACCESS_KEY = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
 
 // Check if we're in a production environment that requires AWS credentials
-const isProduction = process.env.NODE_ENV === 'production' || process.env.AMPLIFY_AWS_ACCESS_KEY_ID;
+const isProduction = process.env.NODE_ENV === 'production';
 
+// Only throw error in production if credentials are missing
 if (isProduction && (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY)) {
   throw new Error('AWS credentials are required. Please set AMPLIFY_AWS_ACCESS_KEY_ID and AMPLIFY_AWS_SECRET_ACCESS_KEY environment variables.');
 }
