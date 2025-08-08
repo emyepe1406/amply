@@ -27,8 +27,10 @@ export async function POST(request: NextRequest) {
       }, { status: 404 });
     }
 
-    // Generate unique order ID for course purchase
-    const orderId = `COURSE_${userId}_${courseId}_${Date.now()}`;
+    // Generate unique order ID for course purchase (max 50 chars for Midtrans)
+    const timestamp = Date.now().toString().slice(-8); // Last 8 digits
+    const userIdShort = userId.slice(-8); // Last 8 chars of userId
+    const orderId = `C_${userIdShort}_${courseId}_${timestamp}`;
     console.log('Generated order ID:', orderId);
 
     // Prepare customer details

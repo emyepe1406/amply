@@ -15,8 +15,10 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Generate unique order ID for subscription
-    const orderId = `SUB_${userId}_${Date.now()}`;
+    // Generate unique order ID for subscription (max 50 chars for Midtrans)
+    const timestamp = Date.now().toString().slice(-8); // Last 8 digits
+    const userIdShort = userId.slice(-8); // Last 8 chars of userId
+    const orderId = `S_${userIdShort}_${timestamp}`;
     console.log('Generated order ID:', orderId);
 
     // Prepare customer details

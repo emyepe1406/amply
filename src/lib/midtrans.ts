@@ -13,15 +13,15 @@ const getMidtransConfig = () => {
       MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || '',
       BASE_URL: 'https://api.midtrans.com/v2',
       SNAP_URL: 'https://app.midtrans.com/snap/v1/transactions',
-      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://your-amplify-domain.amplifyapp.com',
-      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://your-amplify-domain.amplifyapp.com'
+      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://main.deiuyhkuxaywf.amplifyapp.com/',
+      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://main.deiuyhkuxaywf.amplifyapp.com/'
     };
   } else {
     // Sandbox configuration for local development
     return {
-      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-_J-T2lq1eaelp4lbAHdCAczV',
-      CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-gMyrpl3ZFmLE0wJG',
-      MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || 'M116485',
+      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-TOq1a2AVuiyhhOjvfs3U_KeO',
+      CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-nKsqvar5cn60u2Lv',
+      MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || 'G141532',
       BASE_URL: 'https://api.sandbox.midtrans.com/v2',
       SNAP_URL: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
       REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
@@ -82,7 +82,7 @@ export async function createSnapTransaction({
     }
   };
 
-  const authString = Buffer.from(MIDTRANS_CONFIG.SERVER_KEY + ':').toString('base64');
+  const authString = Buffer.from(`${MIDTRANS_CONFIG.SERVER_KEY}:`).toString('base64');
 
   try {
     console.log('Creating Midtrans Snap transaction:', parameter);
