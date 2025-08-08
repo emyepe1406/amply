@@ -5,7 +5,11 @@ import { IPAYMU_CONFIG, generateSignature } from '@/lib/ipaymu';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    console.log('=== PAYMENT NOTIFICATION DEBUG ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Base URL:', process.env.NEXT_PUBLIC_BASE_URL);
     console.log('Payment notification received:', body);
+    console.log('Headers:', Object.fromEntries(request.headers.entries()));
 
     // Verify signature from iPaymu
     const receivedSignature = request.headers.get('signature');
@@ -27,9 +31,13 @@ export async function POST(request: NextRequest) {
 
     // Process payment based on status
     if (status === 'berhasil' || status === 'paid') {
+      console.log('Processing successful payment...');
       // Payment successful - activate course access
       try {
         const user = await UserService.getUserByEmail(buyer_email);
+        console.log('User found:', user ? 'Yes' : 'No');
+        console.log('User purchasedCourses before:', user?.purchasedCourses);
+        
         if (user && reference_id) {
           // Extract course info from reference_id
           // Format: COURSE_{userId}_{courseId}_{timestamp}
@@ -41,50 +49,37 @@ export async function POST(request: NextRequest) {
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + 30);
             
-            // Add course to user's purchasedCourses
-             let updatedPurchasedCourses: any;
-             
-             // Handle both array and object formats
-             if (Array.isArray(user.purchasedCourses)) {
-               updatedPurchasedCourses = [...user.purchasedCourses];
-               
-               // Check if course already exists
-               const existingCourseIndex = updatedPurchasedCourses.findIndex(
-                 (course: any) => course.courseId === courseId
-               );
-               
-               if (existingCourseIndex >= 0) {
-                 // Update existing course
-                 updatedPurchasedCourses[existingCourseIndex] = {
-                   courseId,
-                   isActive: true,
-                   expiryDate: expiryDate.toISOString(),
-                   purchaseDate: new Date().toISOString()
-                 };
-               } else {
-                 // Add new course
-                 updatedPurchasedCourses.push({
-                   courseId,
-                   isActive: true,
-                   expiryDate: expiryDate.toISOString(),
-                   purchaseDate: new Date().toISOString()
-                 });
-               }
-             } else {
-               // Handle object format or create new array
-               updatedPurchasedCourses = [{
-                 courseId,
-                 isActive: true,
-                 expiryDate: expiryDate.toISOString(),
-                 purchaseDate: new Date().toISOString()
-               }];
-             }
-             
-             // Update user data
-             await UserService.updateUser(user.id, {
-               purchasedCourses: updatedPurchasedCourses
-             });
+            // Ensure purchasedCourses is always an array
+            let updatedPurchasedCourses = Array.isArray(user.purchasedCourses) 
+              ? [...user.purchasedCourses] 
+              : [];
             
+            // Check if course already exists
+            const existingCourseIndex = updatedPurchasedCourses.findIndex(
+              (course: any) => course.courseId === courseId
+            );
+            
+            const courseData = {
+              courseId,
+              isActive: true,
+              expiryDate: expiryDate.toISOString(),
+              purchaseDate: new Date().toISOString()
+            };
+            
+            if (existingCourseIndex >= 0) {
+              // Update existing course
+              updatedPurchasedCourses[existingCourseIndex] = courseData;
+            } else {
+              // Add new course
+              updatedPurchasedCourses.push(courseData);
+            }
+            
+            // Update user data
+            await UserService.updateUser(user.id, {
+              purchasedCourses: updatedPurchasedCourses
+            });
+            
+            console.log('User purchasedCourses after update:', updatedPurchasedCourses);
             console.log(`Course ${courseId} activated for user ${buyer_email}`);
           } else {
             console.log(`Invalid reference_id format: ${reference_id}`);

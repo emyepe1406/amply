@@ -16,9 +16,7 @@
     "deploy-setup": "npm run validate-env && npm run setup-prod-tables && npm run setup-s3",
     "amplify-init": "npx amplify init",
     "amplify-publish": "npx amplify publish",
-    "deploy-full": "npm run test-prod-build && npm run deploy-setup && npm run amplify-publish",
-    "deploy-vercel": "bash deploy-vercel.sh",
-    "deploy-quick": "npm run build && vercel --prod"
+    "deploy-full": "npm run test-prod-build && npm run deploy-setup && npm run amplify-publish"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.863.0",
@@ -50,7 +48,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">=22.0.0",
+    "node": ">=20.0.0",
     "npm": ">=10.0.0"
   }
 }

@@ -162,20 +162,23 @@ export default function ProfilePage() {
   };
   
   const getPurchaseHistory = () => {
-    if (!user || !user.purchasedCourses) return [];
+    if (!user?.purchasedCourses || !Array.isArray(user.purchasedCourses)) return [];
     
-    if (Array.isArray(user.purchasedCourses)) {
-      return user.purchasedCourses.map((purchase: any) => {
-        const course = getCourseById(purchase.courseId);
-        return {
-          ...purchase,
-          courseTitle: course?.title || purchase.courseId,
-          courseIcon: course?.icon || '📚'
-        };
-      });
-    }
-    
-    return [];
+    return user.purchasedCourses.map((courseAccess: any) => {
+      const course = getCourseById(courseAccess.courseId);
+      const expiryDate = new Date(courseAccess.expiryDate);
+      const now = new Date();
+      const daysRemaining = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      
+      return {
+        ...courseAccess,
+        courseTitle: course?.title || 'Unknown Course',
+        courseIcon: course?.icon || '📚',
+        courseDescription: course?.description || '',
+        daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+        isExpired: expiryDate <= now
+      };
+    }).sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime());
   };
   
   const formatDate = (dateString: string) => {

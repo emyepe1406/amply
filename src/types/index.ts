@@ -5,7 +5,7 @@ export interface User {
   role: 'student' | 'admin';
   enrolledCourses: string[];
   progress: Record<string, CourseProgress>;
-  purchasedCourses?: Record<string, CourseAccess>; // Per-course access with 30-day expiry
+  purchasedCourses?: CourseAccess[]; // Array of purchased courses with 30-day expiry
 }
 
 export interface CourseAccess {

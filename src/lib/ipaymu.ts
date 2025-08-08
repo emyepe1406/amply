@@ -1,13 +1,32 @@
 import crypto from 'crypto';
 
-// iPaymu Payment Gateway Configuration
-export const IPAYMU_CONFIG = {
-  VA: '0000001287807501',
-  API_KEY: 'SANDBOX555CF92B-F01F-4B9D-83C1-A3D2C551F597',
-  BASE_URL: 'https://sandbox.ipaymu.com/api/v2',
-  REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-  NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+// Dynamic iPaymu Configuration based on environment
+const getIPaymuConfig = () => {
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                      process.env.NEXT_PUBLIC_BASE_URL?.includes('amplifyapp.com');
+  
+  if (isProduction) {
+    // Production configuration
+    return {
+      VA: process.env.IPAYMU_VA || '1179001287807501',
+      API_KEY: process.env.IPAYMU_API_KEY || '9A3D7A1F-DFB9-4529-A5F8-16474EC480F8',
+      BASE_URL: 'https://my.ipaymu.com/api/v2',
+      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://your-amplify-domain.amplifyapp.com',
+      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://your-amplify-domain.amplifyapp.com'
+    };
+  } else {
+    // Sandbox configuration for local development
+    return {
+      VA: '0000001287807501',
+      API_KEY: 'SANDBOX555CF92B-F01F-4B9D-83C1-A3D2C551F597',
+      BASE_URL: 'https://sandbox.ipaymu.com/api/v2',
+      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    };
+  }
 };
+
+export const IPAYMU_CONFIG = getIPaymuConfig();
 
 // Course pricing
 export const COURSE_PRICING = {

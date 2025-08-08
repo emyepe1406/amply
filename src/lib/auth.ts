@@ -188,11 +188,13 @@ class AuthManager implements AuthSession {
     if (this._user.role === 'admin') return true;
     
     // Check new per-course access system
-    if (this._user.purchasedCourses && this._user.purchasedCourses[courseId]) {
-      const courseAccess = this._user.purchasedCourses[courseId];
-      const now = new Date();
-      const expiryDate = new Date(courseAccess.expiryDate);
-      return courseAccess.isActive && expiryDate > now;
+    if (this._user.purchasedCourses && Array.isArray(this._user.purchasedCourses)) {
+      const courseAccess = this._user.purchasedCourses.find(course => course.courseId === courseId);
+      if (courseAccess) {
+        const now = new Date();
+        const expiryDate = new Date(courseAccess.expiryDate);
+        return courseAccess.isActive && expiryDate > now;
+      }
     }
     
     // Fallback to old enrollment system for backward compatibility
@@ -207,17 +209,14 @@ class AuthManager implements AuthSession {
     const activeCourses: string[] = [];
     const now = new Date();
     
-    // Check purchased courses
-    if (this._user.purchasedCourses) {
-      // Handle both array and object formats
-      const coursesData = Array.isArray(this._user.purchasedCourses) 
-        ? this._user.purchasedCourses 
-        : Object.values(this._user.purchasedCourses);
-        
-      coursesData.forEach(courseAccess => {
-        const expiryDate = new Date(courseAccess.expiryDate);
-        if (courseAccess.isActive && expiryDate > now) {
-          activeCourses.push(courseAccess.courseId);
+    // Check purchased courses - ensure it's always treated as array
+    if (this._user.purchasedCourses && Array.isArray(this._user.purchasedCourses)) {
+      this._user.purchasedCourses.forEach((courseAccess) => {
+        if (courseAccess && courseAccess.courseId && courseAccess.expiryDate) {
+          const expiryDate = new Date(courseAccess.expiryDate);
+          if (courseAccess.isActive && expiryDate > now) {
+            activeCourses.push(courseAccess.courseId);
+          }
         }
       });
     }
@@ -238,15 +237,8 @@ class AuthManager implements AuthSession {
     if (this._user.role === 'admin') return { hasAccess: true };
     
     // Check purchased courses
-    if (this._user.purchasedCourses) {
-      let courseAccess = null;
-      
-      // Handle both array and object formats
-      if (Array.isArray(this._user.purchasedCourses)) {
-        courseAccess = this._user.purchasedCourses.find(course => course.courseId === courseId);
-      } else {
-        courseAccess = this._user.purchasedCourses[courseId];
-      }
+    if (this._user.purchasedCourses && Array.isArray(this._user.purchasedCourses)) {
+      const courseAccess = this._user.purchasedCourses.find(course => course.courseId === courseId);
       
       if (courseAccess) {
         const now = new Date();
@@ -282,11 +274,11 @@ class AuthManager implements AuthSession {
     
     const expiringSoon: Array<{ courseId: string; daysRemaining: number }> = [];
     
-    if (this._user.purchasedCourses) {
-      Object.keys(this._user.purchasedCourses).forEach(courseId => {
-        const access = this.getCourseAccess(courseId);
+    if (this._user.purchasedCourses && Array.isArray(this._user.purchasedCourses)) {
+      this._user.purchasedCourses.forEach(courseAccess => {
+        const access = this.getCourseAccess(courseAccess.courseId);
         if (access.hasAccess && access.daysRemaining !== undefined && access.daysRemaining <= 10 && access.daysRemaining > 0) {
-          expiringSoon.push({ courseId, daysRemaining: access.daysRemaining });
+          expiringSoon.push({ courseId: courseAccess.courseId, daysRemaining: access.daysRemaining });
         }
       });
     }
