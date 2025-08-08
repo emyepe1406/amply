@@ -1,0 +1,43 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { S3Client } from '@aws-sdk/client-s3';
+
+// AWS Configuration
+const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+
+if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+  throw new Error('AWS credentials are required. Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.');
+}
+
+// DynamoDB Client
+const dynamoClient = new DynamoDBClient({
+  region: AWS_REGION,
+  credentials: {
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+export const dynamoDb = DynamoDBDocumentClient.from(dynamoClient);
+
+// S3 Client
+export const s3Client = new S3Client({
+  region: AWS_REGION,
+  credentials: {
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+// Table Names
+export const TABLES = {
+  USERS: process.env.DYNAMODB_USERS_TABLE || 'lms-users',
+  COURSES: process.env.DYNAMODB_COURSES_TABLE || 'lms-courses',
+  PROGRESS: process.env.DYNAMODB_PROGRESS_TABLE || 'lms-progress',
+  TESTIMONIALS: process.env.DYNAMODB_TESTIMONIALS_TABLE || 'lms-testimonials',
+};
+
+// S3 Bucket
+export const S3_BUCKET = process.env.S3_BUCKET_NAME || 'lms-assets';

@@ -1,0 +1,59 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:ListTables"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/lms-users-prod",
+        "arn:aws:dynamodb:*:*:table/lms-users-prod/index/*",
+        "arn:aws:dynamodb:*:*:table/lms-courses-prod",
+        "arn:aws:dynamodb:*:*:table/lms-courses-prod/index/*",
+        "arn:aws:dynamodb:*:*:table/lms-progress-prod",
+        "arn:aws:dynamodb:*:*:table/lms-progress-prod/index/*"
+      ]
+    },
+    {
+      "Sid": "S3Access",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+        "s3:CreateBucket",
+        "s3:PutBucketPolicy",
+        "s3:PutBucketCors"
+      ],
+      "Resource": [
+        "arn:aws:s3:::lms-content-prod*",
+        "arn:aws:s3:::lms-content-prod*/*"
+      ]
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+}
