@@ -36,10 +36,12 @@ NEXTAUTH_URL=https://your-amplify-domain.amplifyapp.com
 NEXT_PUBLIC_BASE_URL=https://your-amplify-domain.amplifyapp.com
 ```
 
-### Payment Gateway (Opsional)
+### Payment Gateway (Midtrans)
 ```
 MIDTRANS_SERVER_KEY=your-midtrans-server-key
 MIDTRANS_CLIENT_KEY=your-midtrans-client-key
+MIDTRANS_MERCHANT_ID=your-midtrans-merchant-id
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=your-midtrans-client-key
 ```
 
 ### Admin Access
