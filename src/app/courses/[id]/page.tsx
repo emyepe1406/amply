@@ -11,6 +11,7 @@ import { authManager } from '@/lib/auth';
 import { Course, User } from '@/types';
 import { useAuthValidation } from '@/hooks/useUserValidation';
 import { COURSE_PRICING } from '@/lib/ipaymu';
+import { COURSE_PRICING as MIDTRANS_PRICING } from '@/lib/midtrans';
 
 export default function CourseDetailPage() {
   // Hook untuk validasi otomatis dan logout jika user dihapus
@@ -77,7 +78,11 @@ export default function CourseDetailPage() {
     }
   };
 
-  const handlePurchaseCourse = async () => {
+  const handlePurchaseClick = () => {
+    handlePurchaseCourse('midtrans');
+  };
+
+  const handlePurchaseCourse = async (paymentGateway: 'ipaymu' | 'midtrans' = 'midtrans') => {
     if (!user || !course) {
       router.push('/login');
       return;
@@ -85,7 +90,11 @@ export default function CourseDetailPage() {
 
     setPurchasingCourse(true);
     try {
-      const response = await fetch('/api/payment/course/create', {
+      const endpoint = paymentGateway === 'midtrans' 
+        ? '/api/payment/midtrans/course/create'
+        : '/api/payment/course/create';
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,16 +102,44 @@ export default function CourseDetailPage() {
         body: JSON.stringify({
           courseId: course.id,
           userId: user.id,
+          userEmail: user.email || `${user.username}@example.com`,
+          userName: user.username
         }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.paymentUrl) {
-        // Redirect to iPaymu payment page
-        window.location.href = data.paymentUrl;
+      if (paymentGateway === 'midtrans') {
+        if (response.ok && data.success && data.data?.token) {
+          // Use Midtrans Snap
+          // @ts-ignore
+          window.snap.pay(data.data.token, {
+            onSuccess: function(result: any) {
+              console.log('Payment success:', result);
+              window.location.href = `/payment/success?order_id=${data.data.orderId}`;
+            },
+            onPending: function(result: any) {
+              console.log('Payment pending:', result);
+              alert('Pembayaran sedang diproses');
+            },
+            onError: function(result: any) {
+              console.log('Payment error:', result);
+              alert('Terjadi kesalahan saat memproses pembayaran');
+            },
+            onClose: function() {
+              console.log('Payment popup closed');
+            }
+          });
+        } else {
+          alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+        }
       } else {
-        alert(data.error || 'Terjadi kesalahan saat memproses pembayaran');
+        // iPaymu flow
+        if (response.ok && data.success && data.data?.url) {
+          window.location.href = data.data.url;
+        } else {
+          alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+        }
       }
     } catch (error) {
       console.error('Error creating payment:', error);
@@ -283,7 +320,7 @@ export default function CourseDetailPage() {
                       default:
                         return (
                           <button
-                            onClick={handlePurchaseCourse}
+                            onClick={handlePurchaseClick}
                             disabled={purchasingCourse}
                             className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-yellow-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -584,7 +621,7 @@ export default function CourseDetailPage() {
                       } else if (status === 'purchase') {
                         return (
                           <button
-                            onClick={handlePurchaseCourse}
+                            onClick={handlePurchaseClick}
                             disabled={purchasingCourse}
                             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                           >

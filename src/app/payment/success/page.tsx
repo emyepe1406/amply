@@ -23,19 +23,23 @@ function PaymentSuccessContent() {
       // Get payment info from URL params
       const sessionId = searchParams.get('sessionId');
       const referenceId = searchParams.get('referenceId');
+      const orderId = searchParams.get('order_id'); // Midtrans parameter
       const status = searchParams.get('status');
 
-      if (sessionId || referenceId) {
+      if (sessionId || referenceId || orderId) {
         setPaymentInfo({
           sessionId,
           referenceId,
+          orderId,
           status
         });
 
-        // Extract course ID from reference ID
-        // Format: COURSE_{userId}_{courseId}_{timestamp} or COURSE_user_{userId}_{courseId}_{timestamp}
-        if (referenceId) {
-          const refParts = referenceId.split('_');
+        // Extract course ID from reference ID or order ID
+        // iPaymu format: COURSE_{userId}_{courseId}_{timestamp} or COURSE_user_{userId}_{courseId}_{timestamp}
+        // Midtrans format: COURSE_{userId}_{courseId}_{timestamp}
+        const idToProcess = orderId || referenceId;
+        if (idToProcess) {
+          const refParts = idToProcess.split('_');
           let courseId = null;
           
           // Handle different formats
