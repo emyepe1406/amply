@@ -8,8 +8,13 @@ const nextConfig = {
     // Disable TypeScript errors during production builds
     ignoreBuildErrors: true,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['aws-sdk'],
+  // Use the new serverExternalPackages instead of deprecated serverComponentsExternalPackages
+  serverExternalPackages: ['aws-sdk'],
+  // Disable static optimization for better Amplify compatibility
+  output: 'standalone',
+  // Ensure proper image optimization for Amplify
+  images: {
+    unoptimized: true,
   },
 }
 

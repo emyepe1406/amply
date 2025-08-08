@@ -78,7 +78,7 @@ git add .
 git commit -m "Initial commit"
 
 # 2. Push ke GitHub
-git remote add origin https://github.com/username/repo-name.git
+git remote add origin https://github.com/emyepe1406/amply.git
 git push -u origin main
 ```
 
