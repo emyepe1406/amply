@@ -19,6 +19,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'purchases'>('profile');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
+  const [loadingPurchases, setLoadingPurchases] = useState(false);
   
   // Password change form
   const [passwordForm, setPasswordForm] = useState({
@@ -69,6 +71,13 @@ export default function ProfilePage() {
 
     return () => unsubscribe();
   }, [router]);
+
+  // Fetch purchase history when user is loaded or tab changes to purchases
+  useEffect(() => {
+    if (user && activeTab === 'purchases') {
+      fetchPurchaseHistory();
+    }
+  }, [user, activeTab]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,7 +170,46 @@ export default function ProfilePage() {
     }
   };
   
-  const getPurchaseHistory = () => {
+  const fetchPurchaseHistory = async () => {
+    if (!user) return;
+    
+    setLoadingPurchases(true);
+    try {
+      const response = await fetch('/api/payments/history', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const enrichedHistory = data.payments.map((payment: any) => {
+            const course = getCourseById(payment.courseId);
+            const expiryDate = new Date(payment.expiryDate);
+            const now = new Date();
+            const daysRemaining = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            
+            return {
+              ...payment,
+              courseTitle: course?.title || 'Unknown Course',
+              courseIcon: course?.icon || '📚',
+              courseDescription: course?.description || '',
+              daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+              isExpired: expiryDate <= now
+            };
+          });
+          setPurchaseHistory(enrichedHistory);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching purchase history:', error);
+    } finally {
+      setLoadingPurchases(false);
+    }
+  };
+  
+  // Fallback function for backward compatibility
+  const getLegacyPurchaseHistory = () => {
     if (!user?.purchasedCourses || !Array.isArray(user.purchasedCourses)) return [];
     
     return user.purchasedCourses.map((courseAccess: any) => {
@@ -222,7 +270,8 @@ export default function ProfilePage() {
     return null;
   }
 
-  const purchaseHistory = getPurchaseHistory();
+  // Use new payment history or fallback to legacy
+  const displayHistory = purchaseHistory.length > 0 ? purchaseHistory : getLegacyPurchaseHistory();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -472,7 +521,14 @@ export default function ProfilePage() {
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900">Riwayat Pembelian Kursus</h2>
                 
-                {purchaseHistory.length === 0 ? (
+                {loadingPurchases ? (
+                  <div className="text-center py-12">
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
+                      <span className="text-gray-600">Memuat riwayat pembelian...</span>
+                    </div>
+                  </div>
+                ) : displayHistory.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <i className="fas fa-shopping-cart text-3xl text-gray-400"></i>
@@ -493,7 +549,7 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {purchaseHistory.map((purchase: any, index: number) => {
+                    {displayHistory.map((purchase: any, index: number) => {
                       const daysRemaining = getDaysRemaining(purchase.expiryDate);
                       const isExpired = daysRemaining <= 0;
                       const isExpiringSoon = daysRemaining <= 10 && daysRemaining > 0;

@@ -15,6 +15,7 @@ export interface CourseAccess {
   isActive: boolean;
   transactionId?: string;
   referenceId?: string;
+  paymentId?: string; // Link to payment record in payments table
 }
 
 export interface Course {

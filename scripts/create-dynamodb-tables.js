@@ -74,6 +74,45 @@ const tables = [
       { AttributeName: 'id', AttributeType: 'S' }
     ],
     BillingMode: 'PAY_PER_REQUEST'
+  },
+  {
+    TableName: 'lms-payments',
+    KeySchema: [
+      { AttributeName: 'id', KeyType: 'HASH' }
+    ],
+    AttributeDefinitions: [
+      { AttributeName: 'id', AttributeType: 'S' },
+      { AttributeName: 'userId', AttributeType: 'S' },
+      { AttributeName: 'orderId', AttributeType: 'S' },
+      { AttributeName: 'transactionId', AttributeType: 'S' }
+    ],
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: 'UserIdIndex',
+        KeySchema: [
+          { AttributeName: 'userId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' },
+        BillingMode: 'PAY_PER_REQUEST'
+      },
+      {
+        IndexName: 'OrderIdIndex',
+        KeySchema: [
+          { AttributeName: 'orderId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' },
+        BillingMode: 'PAY_PER_REQUEST'
+      },
+      {
+        IndexName: 'TransactionIdIndex',
+        KeySchema: [
+          { AttributeName: 'transactionId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' },
+        BillingMode: 'PAY_PER_REQUEST'
+      }
+    ],
+    BillingMode: 'PAY_PER_REQUEST'
   }
 ];
 

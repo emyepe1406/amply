@@ -21,6 +21,7 @@ DYNAMODB_USERS_TABLE=lms-users
 DYNAMODB_COURSES_TABLE=lms-courses
 DYNAMODB_PROGRESS_TABLE=lms-progress
 DYNAMODB_TESTIMONIALS_TABLE=lms-testimonials
+DYNAMODB_PAYMENTS_TABLE=lms-payments
 ```
 
 ### S3 Storage

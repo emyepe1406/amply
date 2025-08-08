@@ -75,6 +75,42 @@ const tables = [
         Projection: { ProjectionType: 'ALL' }
       }
     ]
+  },
+  {
+    TableName: process.env.DYNAMODB_PAYMENTS_TABLE || 'lms-payments-prod',
+    KeySchema: [
+      { AttributeName: 'id', KeyType: 'HASH' }
+    ],
+    AttributeDefinitions: [
+      { AttributeName: 'id', AttributeType: 'S' },
+      { AttributeName: 'userId', AttributeType: 'S' },
+      { AttributeName: 'orderId', AttributeType: 'S' },
+      { AttributeName: 'transactionId', AttributeType: 'S' }
+    ],
+    BillingMode: 'PAY_PER_REQUEST',
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: 'userId-index',
+        KeySchema: [
+          { AttributeName: 'userId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' }
+      },
+      {
+        IndexName: 'orderId-index',
+        KeySchema: [
+          { AttributeName: 'orderId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' }
+      },
+      {
+        IndexName: 'transactionId-index',
+        KeySchema: [
+          { AttributeName: 'transactionId', KeyType: 'HASH' }
+        ],
+        Projection: { ProjectionType: 'ALL' }
+      }
+    ]
   }
 ];
 

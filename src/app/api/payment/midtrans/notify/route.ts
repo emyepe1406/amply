@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { UserService } from '@/lib/dynamodb-service';
 import { MIDTRANS_CONFIG, verifySignature } from '@/lib/midtrans';
 import { COURSE_PRICING } from '@/lib/midtrans';
+const PaymentService = require('@/lib/PaymentService');
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,10 +38,13 @@ export async function POST(request: NextRequest) {
       console.log('Processing successful payment...');
       
       try {
+        // Initialize PaymentService
+        const paymentService = new PaymentService();
+        
         // Extract user and course info from order_id
-        // Format: COURSE_{userId}_{courseId}_{timestamp}
+        // Format: COURSE_{userId}_{courseId}_{timestamp} or C_{userId}_{courseId}_{timestamp}
         const orderParts = order_id.split('_');
-        if (orderParts.length >= 3 && orderParts[0] === 'COURSE') {
+        if (orderParts.length >= 3 && (orderParts[0] === 'COURSE' || orderParts[0] === 'C')) {
           const userId = orderParts[1];
           const courseId = orderParts[2];
           
@@ -48,17 +52,44 @@ export async function POST(request: NextRequest) {
           
           const user = await UserService.getUserById(userId);
           console.log('User found:', user ? 'Yes' : 'No');
-          console.log('User purchasedCourses before:', user?.purchasedCourses);
           
           if (user) {
             // Calculate expiry date (30 days from now)
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + COURSE_PRICING.COURSE_ACCESS_DAYS);
             
-            // Ensure purchasedCourses is an array
-            const currentCourses = Array.isArray(user.purchasedCourses) ? user.purchasedCourses : [];
+            // Create payment record in payments table
+            const paymentData = {
+              userId,
+              courseId,
+              orderId: order_id,
+              transactionId: body.transaction_id || order_id,
+              status: 'success',
+              amount: parseFloat(gross_amount),
+              currency: 'IDR',
+              paymentMethod: body.payment_type || 'unknown',
+              transactionTime: transaction_time,
+              purchaseDate: new Date().toISOString(),
+              expiryDate: expiryDate.toISOString(),
+              isActive: true,
+              midtransData: {
+                transaction_status,
+                fraud_status,
+                status_code,
+                payment_type: body.payment_type,
+                bank: body.bank,
+                va_numbers: body.va_numbers,
+                biller_code: body.biller_code,
+                bill_key: body.bill_key
+              }
+            };
             
-            // Check if course already exists
+            // Save payment record
+            const paymentRecord = await paymentService.createPayment(paymentData);
+            console.log('Payment record created:', paymentRecord.id);
+            
+            // Also update user's purchasedCourses for backward compatibility
+            const currentCourses = Array.isArray(user.purchasedCourses) ? user.purchasedCourses : [];
             const existingCourseIndex = currentCourses.findIndex(course => course.courseId === courseId);
             
             let updatedCourses;
@@ -70,7 +101,8 @@ export async function POST(request: NextRequest) {
                 purchaseDate: new Date().toISOString(),
                 expiryDate: expiryDate.toISOString(),
                 isActive: true,
-                transactionId: order_id
+                transactionId: order_id,
+                paymentId: paymentRecord.id // Link to payment record
               };
               console.log('Updated existing course access');
             } else {
@@ -82,7 +114,8 @@ export async function POST(request: NextRequest) {
                   purchaseDate: new Date().toISOString(),
                   expiryDate: expiryDate.toISOString(),
                   isActive: true,
-                  transactionId: order_id
+                  transactionId: order_id,
+                  paymentId: paymentRecord.id // Link to payment record
                 }
               ];
               console.log('Added new course access');
