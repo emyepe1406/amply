@@ -13,8 +13,8 @@ const getMidtransConfig = () => {
       MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || '',
       BASE_URL: 'https://api.midtrans.com/v2',
       SNAP_URL: 'https://app.midtrans.com/snap/v1/transactions',
-      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://main.deiuyhkuxaywf.amplifyapp.com/',
-      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://main.deiuyhkuxaywf.amplifyapp.com/'
+      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.learning.kinabaruservice.info/',
+      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.learning.kinabaruservice.info/'
     };
   } else {
     // Sandbox configuration for local development
