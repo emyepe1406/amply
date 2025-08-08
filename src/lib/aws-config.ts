@@ -3,12 +3,13 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { S3Client } from '@aws-sdk/client-s3';
 
 // AWS Configuration
-const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
-const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+// Use AMPLIFY_ prefix for environment variables to avoid AWS prefix restriction
+const AWS_REGION = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
+const AWS_ACCESS_KEY_ID = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
 
 if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
-  throw new Error('AWS credentials are required. Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.');
+  throw new Error('AWS credentials are required. Please set AMPLIFY_AWS_ACCESS_KEY_ID and AMPLIFY_AWS_SECRET_ACCESS_KEY environment variables.');
 }
 
 // DynamoDB Client

@@ -8,6 +8,13 @@ frontend:
         - npm ci
     build:
       commands:
+        - env | grep -e AMPLIFY_AWS_REGION >> .env.production
+        - env | grep -e AMPLIFY_AWS_ACCESS_KEY_ID >> .env.production
+        - env | grep -e AMPLIFY_AWS_SECRET_ACCESS_KEY >> .env.production
+        - env | grep -e DYNAMODB_TABLES >> .env.production
+        - env | grep -e S3_BUCKET_NAME >> .env.production
+        - env | grep -e NEXTAUTH_ >> .env.production
+        - env | grep -e NEXT_PUBLIC_ >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
