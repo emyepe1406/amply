@@ -18,12 +18,14 @@
         "dynamodb:ListTables"
       ],
       "Resource": [
-        "arn:aws:dynamodb:*:*:table/lms-users-prod",
-        "arn:aws:dynamodb:*:*:table/lms-users-prod/index/*",
-        "arn:aws:dynamodb:*:*:table/lms-courses-prod",
-        "arn:aws:dynamodb:*:*:table/lms-courses-prod/index/*",
-        "arn:aws:dynamodb:*:*:table/lms-progress-prod",
-        "arn:aws:dynamodb:*:*:table/lms-progress-prod/index/*"
+        "arn:aws:dynamodb:*:*:table/lms-users",
+        "arn:aws:dynamodb:*:*:table/lms-users/index/*",
+        "arn:aws:dynamodb:*:*:table/lms-courses",
+        "arn:aws:dynamodb:*:*:table/lms-courses/index/*",
+        "arn:aws:dynamodb:*:*:table/lms-progress",
+        "arn:aws:dynamodb:*:*:table/lms-progress/index/*",
+        "arn:aws:dynamodb:*:*:table/lms-testimonials",
+        "arn:aws:dynamodb:*:*:table/lms-testimonials/index/*"
       ]
     },
     {
@@ -39,8 +41,8 @@
         "s3:PutBucketCors"
       ],
       "Resource": [
-        "arn:aws:s3:::lms-content-prod*",
-        "arn:aws:s3:::lms-content-prod*/*"
+        "arn:aws:s3:::ssw-lms-files",
+        "arn:aws:s3:::ssw-lms-files/*"
       ]
     },
     {
