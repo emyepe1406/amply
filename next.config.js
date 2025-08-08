@@ -10,12 +10,14 @@ const nextConfig = {
   },
   // Use the new serverExternalPackages instead of deprecated serverComponentsExternalPackages
   serverExternalPackages: ['aws-sdk'],
-  // Disable static optimization for better Amplify compatibility
-  output: 'standalone',
+  // Remove standalone output for better Amplify compatibility
+  // output: 'standalone',
   // Ensure proper image optimization for Amplify
   images: {
     unoptimized: true,
   },
+  // Add trailingSlash for better static hosting
+  trailingSlash: true,
 }
 
 module.exports = nextConfig
