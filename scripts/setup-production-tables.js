@@ -2,10 +2,15 @@ const AWS = require('aws-sdk');
 require('dotenv').config({ path: '.env.production' });
 
 // Configure AWS
+// Support both AMPLIFY_AWS_ and AWS_ prefixes
+const awsRegion = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
+const awsAccessKeyId = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+const awsSecretAccessKey = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+
 AWS.config.update({
-  region: process.env.AWS_REGION || 'us-east-1',
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  region: awsRegion,
+  accessKeyId: awsAccessKeyId,
+  secretAccessKey: awsSecretAccessKey
 });
 
 const dynamodb = new AWS.DynamoDB();
