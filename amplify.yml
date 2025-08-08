@@ -15,6 +15,7 @@ frontend:
         - env | grep -e S3_BUCKET_NAME >> .env.production || true
         - env | grep -e NEXTAUTH_ >> .env.production || true
         - env | grep -e NEXT_PUBLIC_ >> .env.production || true
+        - env | grep -e MIDTRANS_ >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next
