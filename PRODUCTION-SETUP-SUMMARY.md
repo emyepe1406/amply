@@ -62,8 +62,8 @@ npm run amplify-init
 npm run amplify-publish
 ```
 
-### 5. Update iPaymu
-Setelah deploy, update URLs di dashboard iPaymu:
+### 5. Update Midtrans
+Setelah deploy, update URLs di dashboard Midtrans:
 - Return URL: `https://your-app.amplifyapp.com/payment/success`
 - Notify URL: `https://your-app.amplifyapp.com/api/payment/notify`
 
@@ -80,9 +80,8 @@ S3_BUCKET_NAME=lms-content-prod-unique-name
 NEXTAUTH_SECRET=your_32_char_secret
 NEXTAUTH_URL=https://your-app.amplifyapp.com
 NEXT_PUBLIC_BASE_URL=https://your-app.amplifyapp.com
-IPAYMU_VA=your_ipaymu_va
-IPAYMU_SECRET=your_ipaymu_secret
-IPAYMU_API_KEY=your_ipaymu_api_key
+MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=your_secure_password
 ```
@@ -114,7 +113,7 @@ ADMIN_PASSWORD=your_secure_password
 - Verify IAM permissions
 
 ### Payment Not Working
-- Check iPaymu configuration
+- Check Midtrans configuration
 - Verify notify URL accessible from internet
 - Check payment notification logs
 
@@ -123,7 +122,7 @@ ADMIN_PASSWORD=your_secure_password
 1. **Test Locally**: `npm run test-prod-build`
 2. **Setup AWS**: `npm run deploy-setup`
 3. **Deploy**: Via Amplify Console atau CLI
-4. **Configure iPaymu**: Update URLs
+4. **Configure Midtrans**: Update URLs
 5. **Monitor**: Setup CloudWatch alerts
 6. **Backup**: Enable DynamoDB point-in-time recovery
 

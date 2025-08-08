@@ -34,26 +34,16 @@ function PaymentSuccessContent() {
           status
         });
 
-        // Extract course ID from reference ID or order ID
-        // iPaymu format: COURSE_{userId}_{courseId}_{timestamp} or COURSE_user_{userId}_{courseId}_{timestamp}
+        // Extract course ID from order ID
         // Midtrans format: COURSE_{userId}_{courseId}_{timestamp}
         const idToProcess = orderId || referenceId;
         if (idToProcess) {
           const refParts = idToProcess.split('_');
           let courseId = null;
           
-          // Handle different formats
+          // Handle Midtrans format: COURSE_{userId}_{courseId}_{timestamp}
           if (refParts.length >= 4 && refParts[0] === 'COURSE') {
-            if (refParts[1] === 'user' && refParts.length >= 5) {
-              // Format: COURSE_user_{userId}_{courseId}_{timestamp}
-              courseId = refParts[3];
-            } else if (refParts[1] !== 'user') {
-              // Format: COURSE_{userId}_{courseId}_{timestamp}
-              courseId = refParts[2];
-            } else {
-              // Format: COURSE_user123_{courseId}_{timestamp} (user123 as single part)
-              courseId = refParts[2];
-            }
+            courseId = refParts[2];
           }
           
           if (courseId) {

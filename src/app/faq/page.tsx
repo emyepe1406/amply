@@ -22,7 +22,7 @@ const faqData: FAQItem[] = [
   },
   {
     question: "Bagaimana cara melakukan pembayaran?",
-    answer: "Kami menerima pembayaran melalui iPaymu yang mendukung berbagai metode pembayaran seperti Virtual Account, E-wallet, dan transfer bank."
+    answer: "Kami menerima pembayaran melalui Midtrans yang mendukung berbagai metode pembayaran seperti Virtual Account, E-wallet, kartu kredit, dan transfer bank."
   },
   {
     question: "Berapa lama akses kursus yang saya beli?",

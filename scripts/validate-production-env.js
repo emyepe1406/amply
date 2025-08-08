@@ -13,8 +13,7 @@ const requiredEnvVars = [
   'NEXTAUTH_SECRET',
   'NEXTAUTH_URL',
   'NEXT_PUBLIC_BASE_URL',
-  'IPAYMU_VA',
-  'IPAYMU_API_KEY',
+
   'ADMIN_USERNAME',
   'ADMIN_PASSWORD'
 ];

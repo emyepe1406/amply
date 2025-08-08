@@ -47,9 +47,9 @@ NEXTAUTH_URL=http://localhost:3000
 # Base URL for development
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# iPaymu Configuration
-IPAYMU_VA=your-ipaymu-va
-IPAYMU_API_KEY=your-ipaymu-api-key
+# Midtrans Configuration
+MIDTRANS_SERVER_KEY=your-midtrans-server-key
+MIDTRANS_CLIENT_KEY=your-midtrans-client-key
 
 # Admin Configuration
 ADMIN_USERNAME=admin

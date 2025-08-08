@@ -32,7 +32,7 @@ const getMidtransConfig = () => {
 
 export const MIDTRANS_CONFIG = getMidtransConfig();
 
-// Course pricing (same as iPaymu)
+// Course pricing
 export const COURSE_PRICING = {
   MONTHLY_SUBSCRIPTION: 150000, // Rp 150,000 per month for all courses
   PER_COURSE: 150000, // Rp 150,000 per course per month (30 days access)

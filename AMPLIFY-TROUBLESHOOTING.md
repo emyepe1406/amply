@@ -79,9 +79,8 @@ S3_BUCKET_NAME=lms-content-prod-ktjp0x
 NEXTAUTH_SECRET=your_nextauth_secret
 NEXTAUTH_URL=https://your-amplify-domain.amplifyapp.com
 NEXT_PUBLIC_BASE_URL=https://your-amplify-domain.amplifyapp.com
-IPAYMU_VA=your_ipaymu_va
-IPAYMU_SECRET=your_ipaymu_secret
-IPAYMU_API_KEY=your_ipaymu_api_key
+MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=your_admin_password
 ```

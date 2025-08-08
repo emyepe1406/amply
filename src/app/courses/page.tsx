@@ -7,7 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Course } from '@/types';
 import { authManager } from '@/lib/auth';
-import { COURSE_PRICING } from '@/lib/ipaymu';
+import { COURSE_PRICING } from '@/lib/midtrans';
 
 const categories = [
   { id: 'all', name: 'Semua Kursus', icon: '📚' },

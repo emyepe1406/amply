@@ -119,7 +119,7 @@ async function testProductionBuild() {
     console.log('   1. Test the app locally: npm start');
     console.log('   2. Setup AWS resources: npm run deploy-setup');
     console.log('   3. Deploy to Amplify: npm run amplify-publish');
-    console.log('   4. Update iPaymu URLs with your Amplify domain');
+    console.log('   4. Update Midtrans URLs with your Amplify domain');
     console.log('');
     console.log('📖 For detailed instructions, see DEPLOYMENT.md');
     

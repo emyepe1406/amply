@@ -10,8 +10,7 @@ import { getCourseById } from '@/data/courses';
 import { authManager } from '@/lib/auth';
 import { Course, User } from '@/types';
 import { useAuthValidation } from '@/hooks/useUserValidation';
-import { COURSE_PRICING } from '@/lib/ipaymu';
-import { COURSE_PRICING as MIDTRANS_PRICING } from '@/lib/midtrans';
+import { COURSE_PRICING } from '@/lib/midtrans';
 
 export default function CourseDetailPage() {
   // Hook untuk validasi otomatis dan logout jika user dihapus
@@ -79,10 +78,10 @@ export default function CourseDetailPage() {
   };
 
   const handlePurchaseClick = () => {
-    handlePurchaseCourse('midtrans');
+    handlePurchaseCourse();
   };
 
-  const handlePurchaseCourse = async (paymentGateway: 'ipaymu' | 'midtrans' = 'midtrans') => {
+  const handlePurchaseCourse = async () => {
     if (!user || !course) {
       router.push('/login');
       return;
@@ -90,11 +89,7 @@ export default function CourseDetailPage() {
 
     setPurchasingCourse(true);
     try {
-      const endpoint = paymentGateway === 'midtrans' 
-        ? '/api/payment/midtrans/course/create'
-        : '/api/payment/course/create';
-      
-      const response = await fetch(endpoint, {
+      const response = await fetch('/api/payment/midtrans/course/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,37 +104,28 @@ export default function CourseDetailPage() {
 
       const data = await response.json();
 
-      if (paymentGateway === 'midtrans') {
-        if (response.ok && data.success && data.data?.token) {
-          // Use Midtrans Snap
-          // @ts-ignore
-          window.snap.pay(data.data.token, {
-            onSuccess: function(result: any) {
-              console.log('Payment success:', result);
-              window.location.href = `/payment/success?order_id=${data.data.orderId}`;
-            },
-            onPending: function(result: any) {
-              console.log('Payment pending:', result);
-              alert('Pembayaran sedang diproses');
-            },
-            onError: function(result: any) {
-              console.log('Payment error:', result);
-              alert('Terjadi kesalahan saat memproses pembayaran');
-            },
-            onClose: function() {
-              console.log('Payment popup closed');
-            }
-          });
-        } else {
-          alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-        }
+      if (response.ok && data.success && data.data?.token) {
+        // Use Midtrans Snap
+        // @ts-ignore
+        window.snap.pay(data.data.token, {
+          onSuccess: function(result: any) {
+            console.log('Payment success:', result);
+            window.location.href = `/payment/success?order_id=${data.data.orderId}`;
+          },
+          onPending: function(result: any) {
+            console.log('Payment pending:', result);
+            alert('Pembayaran sedang diproses');
+          },
+          onError: function(result: any) {
+            console.log('Payment error:', result);
+            alert('Terjadi kesalahan saat memproses pembayaran');
+          },
+          onClose: function() {
+            console.log('Payment popup closed');
+          }
+        });
       } else {
-        // iPaymu flow
-        if (response.ok && data.success && data.data?.url) {
-          window.location.href = data.data.url;
-        } else {
-          alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-        }
+        alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
       }
     } catch (error) {
       console.error('Error creating payment:', error);

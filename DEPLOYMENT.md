@@ -44,10 +44,9 @@ NEXTAUTH_URL=https://your-app-name.amplifyapp.com
 # Base URL
 NEXT_PUBLIC_BASE_URL=https://your-app-name.amplifyapp.com
 
-# iPaymu Configuration
-IPAYMU_VA=your_ipaymu_va
-IPAYMU_SECRET=your_ipaymu_secret
-IPAYMU_API_KEY=your_ipaymu_api_key
+# Midtrans Configuration
+MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key
 
 # Admin Configuration
 ADMIN_USERNAME=admin
@@ -93,9 +92,8 @@ node scripts/setup-s3-bucket.js
    NEXTAUTH_SECRET=your_nextauth_secret
    NEXTAUTH_URL=https://your-app-name.amplifyapp.com
    NEXT_PUBLIC_BASE_URL=https://your-app-name.amplifyapp.com
-   IPAYMU_VA=your_ipaymu_va
-   IPAYMU_SECRET=your_ipaymu_secret
-   IPAYMU_API_KEY=your_ipaymu_api_key
+   MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key
    ADMIN_USERNAME=admin
    ADMIN_PASSWORD=your_secure_admin_password
    ```
@@ -117,10 +115,10 @@ npx amplify publish
 
 ## Step 3: Post-Deployment Setup
 
-### 3.1 Update iPaymu Configuration
+### 3.1 Update Midtrans Configuration
 
-Setelah mendapat URL Amplify, update konfigurasi iPaymu:
-1. Login ke dashboard iPaymu
+Setelah mendapat URL Amplify, update konfigurasi Midtrans:
+1. Login ke dashboard Midtrans
 2. Update **Return URL** dan **Notify URL**:
    - Return URL: `https://your-app-name.amplifyapp.com/payment/success`
    - Notify URL: `https://your-app-name.amplifyapp.com/api/payment/notify`
@@ -166,7 +164,7 @@ node scripts/seed-dynamodb.js
 3. Verify IAM permissions
 
 ### Payment Issues
-1. Verify iPaymu configuration
+1. Verify Midtrans configuration
 2. Check notify URL accessibility
 3. Monitor payment logs
 

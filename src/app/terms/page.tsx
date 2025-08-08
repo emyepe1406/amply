@@ -70,7 +70,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Pembayaran dan Akses Kursus</h2>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li>Semua kursus memiliki harga Rp 150.000 dengan akses selama 30 hari</li>
-                <li>Pembayaran dilakukan melalui iPaymu dengan berbagai metode yang tersedia</li>
+                <li>Pembayaran dilakukan melalui Midtrans dengan berbagai metode yang tersedia</li>
                 <li>Akses kursus dimulai setelah pembayaran berhasil dikonfirmasi</li>
                 <li>Setelah 30 hari, akses akan berakhir dan perlu diperpanjang dengan pembelian ulang</li>
                 <li>Harga dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya</li>
