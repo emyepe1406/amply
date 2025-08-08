@@ -18,6 +18,12 @@ const nextConfig = {
   },
   // Add trailingSlash for better static hosting
   trailingSlash: true,
+  // Expose environment variables to the browser
+  env: {
+    AMPLIFY_AWS_REGION: process.env.AMPLIFY_AWS_REGION,
+    AMPLIFY_AWS_ACCESS_KEY_ID: process.env.AMPLIFY_AWS_ACCESS_KEY_ID,
+    AMPLIFY_AWS_SECRET_ACCESS_KEY: process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY,
+  },
 }
 
 module.exports = nextConfig
