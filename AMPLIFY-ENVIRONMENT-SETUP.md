@@ -38,7 +38,6 @@ NEXT_PUBLIC_BASE_URL=https://your-amplify-domain.amplifyapp.com
 ### Payment Gateway (Opsional)
 ```
 IPAYMU_VA=your-ipaymu-va
-IPAYMU_SECRET=your-ipaymu-secret
 IPAYMU_API_KEY=your-ipaymu-api-key
 ```
 
