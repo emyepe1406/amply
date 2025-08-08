@@ -221,6 +221,7 @@ Sistem pembayaran Midtrans telah diimplementasikan dengan:
 5. Monitoring dan logging yang detail
 
 ## Support
-- **Midtrans Documentation:** https://docs.midtrans.com
+- **Midtrans Documentation:** https://docs.midtrans.com/en/welcome/index.html
+- **Midtrans API Reference:** https://docs.midtrans.com
 - **Midtrans Support:** https://support.midtrans.com
 - **Technical Contact:** developer@sswlearning.com

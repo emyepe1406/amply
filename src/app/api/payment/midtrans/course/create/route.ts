@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSnapTransaction, COURSE_PRICING } from '@/lib/midtrans';
 import { getCourseById } from '@/data/courses';
 
+// Updated to use correct Midtrans credentials
+
 export async function POST(request: NextRequest) {
   try {
     const { userId, userEmail, userName, courseId } = await request.json();

@@ -19,7 +19,7 @@ const getMidtransConfig = () => {
   } else {
     // Sandbox configuration for local development
     return {
-      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server_-J-T2lq1eaelp4bAHdCACzV',
+      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-_J-T2lq1eaelp4lbAHdCAczV',
       CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-gMyrpl3ZFmLE0wJG',
       MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || 'M116485',
       BASE_URL: 'https://api.sandbox.midtrans.com/v2',
@@ -86,6 +86,8 @@ export async function createSnapTransaction({
 
   try {
     console.log('Creating Midtrans Snap transaction:', parameter);
+    console.log('Using SERVER_KEY:', MIDTRANS_CONFIG.SERVER_KEY);
+    console.log('Using SNAP_URL:', MIDTRANS_CONFIG.SNAP_URL);
     const response = await fetch(MIDTRANS_CONFIG.SNAP_URL, {
       method: 'POST',
       headers: {

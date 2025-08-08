@@ -80,7 +80,7 @@ export default function CoursesPage() {
     setPurchasingCourse(courseId);
     
     try {
-      const response = await fetch('/api/payment/course/create', {
+      const response = await fetch('/api/payment/midtrans/course/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,16 +93,33 @@ export default function CoursesPage() {
         }),
       });
 
-      const result = await response.json();
-      
-      if (result.success && result.data?.url) {
-        // Redirect to payment page
-        window.location.href = result.data.url;
+      const data = await response.json();
+
+      if (response.ok && data.success && data.data?.token) {
+        // Use Midtrans Snap
+        // @ts-ignore
+        window.snap.pay(data.data.token, {
+          onSuccess: function(result: any) {
+            console.log('Payment success:', result);
+            window.location.href = `/payment/success?order_id=${data.data.orderId}`;
+          },
+          onPending: function(result: any) {
+            console.log('Payment pending:', result);
+            alert('Pembayaran sedang diproses');
+          },
+          onError: function(result: any) {
+            console.log('Payment error:', result);
+            alert('Terjadi kesalahan saat memproses pembayaran');
+          },
+          onClose: function() {
+            console.log('Payment popup closed');
+          }
+        });
       } else {
-        alert(result.message || 'Gagal membuat pembayaran');
+        alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
       }
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Error creating payment:', error);
       alert('Terjadi kesalahan saat memproses pembayaran');
     } finally {
       setPurchasingCourse(null);
