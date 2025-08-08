@@ -4,6 +4,21 @@ import { MIDTRANS_CONFIG, verifySignature } from '@/lib/midtrans';
 import { COURSE_PRICING } from '@/lib/midtrans';
 const PaymentService = require('@/lib/PaymentService');
 
+// GET method for testing webhook URL accessibility
+export async function GET(request: NextRequest) {
+  console.log('=== MIDTRANS WEBHOOK TEST ===');
+  console.log('GET request received for webhook test');
+  console.log('Headers:', Object.fromEntries(request.headers.entries()));
+  
+  return NextResponse.json({
+    status: 'ok',
+    message: 'Midtrans webhook endpoint is accessible',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
