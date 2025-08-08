@@ -11,11 +11,12 @@ frontend:
         - env | grep -e AMPLIFY_AWS_REGION >> .env.production || true
         - env | grep -e AMPLIFY_AWS_ACCESS_KEY_ID >> .env.production || true
         - env | grep -e AMPLIFY_AWS_SECRET_ACCESS_KEY >> .env.production || true
-        - env | grep -e DYNAMODB_TABLES >> .env.production || true
+        - env | grep -e DYNAMODB_ >> .env.production || true
         - env | grep -e S3_BUCKET_NAME >> .env.production || true
         - env | grep -e NEXTAUTH_ >> .env.production || true
         - env | grep -e NEXT_PUBLIC_ >> .env.production || true
         - env | grep -e MIDTRANS_ >> .env.production || true
+        - env | grep -e ADMIN_ >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next
