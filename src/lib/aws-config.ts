@@ -8,29 +8,40 @@ const AWS_REGION = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || '
 const AWS_ACCESS_KEY_ID = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
 
-if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+// Check if we're in a production environment that requires AWS credentials
+const isProduction = process.env.NODE_ENV === 'production' || process.env.AMPLIFY_AWS_ACCESS_KEY_ID;
+
+if (isProduction && (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY)) {
   throw new Error('AWS credentials are required. Please set AMPLIFY_AWS_ACCESS_KEY_ID and AMPLIFY_AWS_SECRET_ACCESS_KEY environment variables.');
 }
 
-// DynamoDB Client
-const dynamoClient = new DynamoDBClient({
-  region: AWS_REGION,
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-});
+// Create AWS clients only if credentials are available
+let dynamoDb: DynamoDBDocumentClient | null = null;
+let s3Client: S3Client | null = null;
 
-export const dynamoDb = DynamoDBDocumentClient.from(dynamoClient);
+if (AWS_ACCESS_KEY_ID && AWS_SECRET_ACCESS_KEY) {
+  // DynamoDB Client
+  const dynamoClient = new DynamoDBClient({
+    region: AWS_REGION,
+    credentials: {
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    },
+  });
 
-// S3 Client
-export const s3Client = new S3Client({
-  region: AWS_REGION,
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-});
+  dynamoDb = DynamoDBDocumentClient.from(dynamoClient);
+
+  // S3 Client
+  s3Client = new S3Client({
+    region: AWS_REGION,
+    credentials: {
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    },
+  });
+}
+
+export { dynamoDb, s3Client };
 
 // Table Names
 export const TABLES = {

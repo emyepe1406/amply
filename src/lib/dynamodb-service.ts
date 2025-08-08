@@ -3,6 +3,14 @@ import { dynamoDb, TABLES } from './aws-config';
 import { User, Course, UserProgress, Testimonial } from '@/types';
 import bcrypt from 'bcryptjs';
 
+// Helper function to check if DynamoDB is available
+function ensureDynamoDb() {
+  if (!dynamoDb) {
+    throw new Error('DynamoDB client is not available. Please check your AWS credentials.');
+  }
+  return dynamoDb;
+}
+
 // User Operations
 export class UserService {
   static async createUser(user: Omit<User, 'id'> & { password: string }): Promise<User> {
@@ -19,7 +27,7 @@ export class UserService {
       updatedAt: new Date().toISOString(),
     };
 
-    await dynamoDb.send(new PutCommand({
+    await ensureDynamoDb().send(new PutCommand({
       TableName: TABLES.USERS,
       Item: userData,
     }));
@@ -30,7 +38,7 @@ export class UserService {
   }
 
   static async getUserById(id: string): Promise<User | null> {
-    const result = await dynamoDb.send(new GetCommand({
+    const result = await ensureDynamoDb().send(new GetCommand({
       TableName: TABLES.USERS,
       Key: { id },
     }));
@@ -42,7 +50,7 @@ export class UserService {
   }
 
   static async getUserByEmail(email: string): Promise<(User & { password: string }) | null> {
-    const result = await dynamoDb.send(new ScanCommand({
+    const result = await ensureDynamoDb().send(new ScanCommand({
       TableName: TABLES.USERS,
       FilterExpression: 'email = :email',
       ExpressionAttributeValues: {
@@ -55,7 +63,7 @@ export class UserService {
   }
 
   static async getAllUsers(): Promise<User[]> {
-    const result = await dynamoDb.send(new ScanCommand({
+    const result = await ensureDynamoDb().send(new ScanCommand({
       TableName: TABLES.USERS,
     }));
 
@@ -101,7 +109,7 @@ export class UserService {
     expressionAttributeNames['#updatedAt'] = 'updatedAt';
     expressionAttributeValues[':updatedAt'] = new Date().toISOString();
 
-    await dynamoDb.send(new UpdateCommand({
+    await ensureDynamoDb().send(new UpdateCommand({
       TableName: TABLES.USERS,
       Key: { id },
       UpdateExpression: `SET ${updateExpressions.join(', ')}`,
@@ -114,7 +122,7 @@ export class UserService {
 
   static async deleteUser(id: string): Promise<boolean> {
     try {
-      await dynamoDb.send(new DeleteCommand({
+      await ensureDynamoDb().send(new DeleteCommand({
         TableName: TABLES.USERS,
         Key: { id },
       }));
@@ -129,7 +137,7 @@ export class UserService {
 // Course Operations
 export class CourseService {
   static async getAllCourses(): Promise<Course[]> {
-    const result = await dynamoDb.send(new ScanCommand({
+    const result = await ensureDynamoDb().send(new ScanCommand({
       TableName: TABLES.COURSES,
     }));
 
@@ -137,7 +145,7 @@ export class CourseService {
   }
 
   static async getCourseById(id: string): Promise<Course | null> {
-    const result = await dynamoDb.send(new GetCommand({
+    const result = await ensureDynamoDb().send(new GetCommand({
       TableName: TABLES.COURSES,
       Key: { id },
     }));
@@ -154,7 +162,7 @@ export class CourseService {
       updatedAt: new Date().toISOString(),
     };
 
-    await dynamoDb.send(new PutCommand({
+    await ensureDynamoDb().send(new PutCommand({
       TableName: TABLES.COURSES,
       Item: courseData,
     }));
@@ -166,7 +174,7 @@ export class CourseService {
 // Progress Operations
 export class ProgressService {
   static async getUserProgress(userId: string): Promise<UserProgress[]> {
-    const result = await dynamoDb.send(new QueryCommand({
+    const result = await ensureDynamoDb().send(new QueryCommand({
       TableName: TABLES.PROGRESS,
       IndexName: 'UserIdIndex', // Assuming you have a GSI on userId
       KeyConditionExpression: 'userId = :userId',
@@ -188,7 +196,7 @@ export class ProgressService {
       updatedAt: new Date().toISOString(),
     };
 
-    await dynamoDb.send(new PutCommand({
+    await ensureDynamoDb().send(new PutCommand({
       TableName: TABLES.PROGRESS,
       Item: progressData,
     }));
@@ -200,7 +208,7 @@ export class ProgressService {
 // Testimonial Operations
 export class TestimonialService {
   static async getAllTestimonials(): Promise<Testimonial[]> {
-    const result = await dynamoDb.send(new ScanCommand({
+    const result = await ensureDynamoDb().send(new ScanCommand({
       TableName: TABLES.TESTIMONIALS,
     }));
 
@@ -215,7 +223,7 @@ export class TestimonialService {
       createdAt: new Date().toISOString(),
     };
 
-    await dynamoDb.send(new PutCommand({
+    await ensureDynamoDb().send(new PutCommand({
       TableName: TABLES.TESTIMONIALS,
       Item: testimonialData,
     }));
