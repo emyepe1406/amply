@@ -1,0 +1,237 @@
+{
+  "timestamp": "2025-08-09T06:39:11.022Z",
+  "totalUsers": 4,
+  "totalPayments": 12,
+  "issues": [
+    {
+      "type": "MISSING_IN_PURCHASED",
+      "userId": "user_1754638244404_3m8tzd46a",
+      "count": 1,
+      "details": [
+        {
+          "courseId": "react-fundamentals",
+          "paymentId": "8a172616-8c7c-4c1c-abdb-992cdba45cf9",
+          "expiryDate": "2025-09-08T05:27:03.265Z",
+          "amount": 150000
+        }
+      ]
+    },
+    {
+      "type": "INCONSISTENT_DATA",
+      "userId": "user_1754638244404_3m8tzd46a",
+      "count": 1,
+      "details": [
+        {
+          "courseId": "react-fundamentals",
+          "paymentId": "8a172616-8c7c-4c1c-abdb-992cdba45cf9",
+          "inconsistencies": [
+            "expiry_date_mismatch"
+          ],
+          "paymentData": {
+            "purchaseDate": "2025-08-09T05:27:03.265Z",
+            "currency": "IDR",
+            "orderId": "C_m8tzd46a_react-fundamentals_17122205",
+            "status": "success",
+            "createdAt": "2025-08-09T05:27:03.265Z",
+            "transactionId": "TXN_TEST_1754717223065",
+            "isActive": true,
+            "transactionTime": "2025-08-09T05:27:03.065Z",
+            "expiryDate": "2025-09-08T05:27:03.265Z",
+            "userId": "user_1754638244404_3m8tzd46a",
+            "updatedAt": "2025-08-09T05:27:03.265Z",
+            "courseId": "react-fundamentals",
+            "amount": 150000,
+            "midtransData": {
+              "fraud_status": "accept",
+              "transaction_status": "settlement",
+              "payment_type": "bank_transfer",
+              "status_code": "200"
+            },
+            "paymentMethod": "bank_transfer",
+            "id": "8a172616-8c7c-4c1c-abdb-992cdba45cf9"
+          },
+          "courseData": {
+            "expiryDate": "2025-09-08T05:25:22.205Z",
+            "syncedFrom": "auto_fix",
+            "purchaseDate": "2025-08-09T06:39:06.771Z",
+            "isActive": true,
+            "courseId": "react-fundamentals",
+            "transactionId": "payment_1754717122205_test"
+          }
+        }
+      ]
+    },
+    {
+      "type": "MISSING_IN_PURCHASED",
+      "userId": "user_1754643260339_58cgdmz05",
+      "count": 3,
+      "details": [
+        {
+          "courseId": "restoran",
+          "paymentId": "f7219550-11c6-4a34-8919-7d1019f30a30",
+          "expiryDate": "2025-09-08T06:12:10.763Z",
+          "amount": 150000
+        },
+        {
+          "courseId": "restoran",
+          "paymentId": "56d54359-1525-435c-9ca0-a0cecaa18ea6",
+          "expiryDate": "2025-09-08T06:37:36.298Z",
+          "amount": 150000
+        },
+        {
+          "courseId": "restoran",
+          "paymentId": "cfcea575-bf0a-4214-b7e6-f0fc321ced33",
+          "expiryDate": "2025-09-08T06:12:42.338Z",
+          "amount": 150000
+        }
+      ]
+    },
+    {
+      "type": "MISSING_IN_PAYMENTS",
+      "userId": "user_1754643260339_58cgdmz05",
+      "count": 1,
+      "details": [
+        {
+          "courseId": "driver-bis",
+          "expiryDate": "2025-09-08T06:01:30.375Z",
+          "purchaseDate": "2025-08-09T06:01:30.375Z"
+        }
+      ]
+    },
+    {
+      "type": "INCONSISTENT_DATA",
+      "userId": "user_1754643260339_58cgdmz05",
+      "count": 3,
+      "details": [
+        {
+          "courseId": "restoran",
+          "paymentId": "f7219550-11c6-4a34-8919-7d1019f30a30",
+          "inconsistencies": [
+            "expiry_date_mismatch"
+          ],
+          "paymentData": {
+            "purchaseDate": "2025-08-09T06:12:10.763Z",
+            "currency": "IDR",
+            "orderId": "C_8cgdmz05_restoran_19331613",
+            "status": "success",
+            "createdAt": "2025-08-09T06:12:10.763Z",
+            "transactionId": "d3b041da-b9cc-4641-957e-a",
+            "isActive": true,
+            "transactionTime": "2025-08-09 13:02:26",
+            "expiryDate": "2025-09-08T06:12:10.763Z",
+            "userId": "user_1754643260339_58cgdmz05",
+            "updatedAt": "2025-08-09T06:12:10.763Z",
+            "courseId": "restoran",
+            "amount": 150000,
+            "midtransData": {
+              "fraud_status": "accept",
+              "transaction_status": "settlement",
+              "payment_type": "credit_card",
+              "status_code": "200"
+            },
+            "paymentMethod": "credit_card",
+            "id": "f7219550-11c6-4a34-8919-7d1019f30a30"
+          },
+          "courseData": {
+            "expiryDate": "2025-09-08T06:11:30.213Z",
+            "syncedFrom": "auto_fix",
+            "purchaseDate": "2025-08-09T06:39:06.797Z",
+            "isActive": true,
+            "courseId": "restoran",
+            "transactionId": "a7b059a9-dc0d-44f3-a314-d305d9d09c00"
+          }
+        },
+        {
+          "courseId": "restoran",
+          "paymentId": "56d54359-1525-435c-9ca0-a0cecaa18ea6",
+          "inconsistencies": [
+            "expiry_date_mismatch"
+          ],
+          "paymentData": {
+            "purchaseDate": "2025-08-09T06:37:36.298Z",
+            "currency": "IDR",
+            "orderId": "C_8cgdmz05_restoran_1754721456245",
+            "status": "success",
+            "createdAt": "2025-08-09T06:37:36.298Z",
+            "transactionId": "C_8cgdmz05_restoran_1754721456245",
+            "isActive": true,
+            "transactionTime": "2025-08-09T06:37:36.246Z",
+            "expiryDate": "2025-09-08T06:37:36.298Z",
+            "userId": "user_1754643260339_58cgdmz05",
+            "updatedAt": "2025-08-09T06:37:36.298Z",
+            "courseId": "restoran",
+            "amount": 150000,
+            "midtransData": {
+              "fraud_status": "accept",
+              "transaction_status": "settlement",
+              "payment_type": "credit_card",
+              "bank": "visa",
+              "status_code": "200"
+            },
+            "paymentMethod": "credit_card",
+            "id": "56d54359-1525-435c-9ca0-a0cecaa18ea6"
+          },
+          "courseData": {
+            "expiryDate": "2025-09-08T06:11:30.213Z",
+            "syncedFrom": "auto_fix",
+            "purchaseDate": "2025-08-09T06:39:06.797Z",
+            "isActive": true,
+            "courseId": "restoran",
+            "transactionId": "a7b059a9-dc0d-44f3-a314-d305d9d09c00"
+          }
+        },
+        {
+          "courseId": "restoran",
+          "paymentId": "cfcea575-bf0a-4214-b7e6-f0fc321ced33",
+          "inconsistencies": [
+            "expiry_date_mismatch"
+          ],
+          "paymentData": {
+            "purchaseDate": "2025-08-09T06:12:42.338Z",
+            "currency": "IDR",
+            "orderId": "C_8cgdmz05_restoran_19331613",
+            "status": "success",
+            "createdAt": "2025-08-09T06:12:42.338Z",
+            "transactionId": "d3b041da-b9cc-4641-957e-a",
+            "isActive": true,
+            "transactionTime": "2025-08-09 13:02:26",
+            "expiryDate": "2025-09-08T06:12:42.338Z",
+            "userId": "user_1754643260339_58cgdmz05",
+            "updatedAt": "2025-08-09T06:12:42.338Z",
+            "courseId": "restoran",
+            "amount": 150000,
+            "midtransData": {
+              "fraud_status": "accept",
+              "transaction_status": "settlement",
+              "payment_type": "credit_card",
+              "status_code": "200"
+            },
+            "paymentMethod": "credit_card",
+            "id": "cfcea575-bf0a-4214-b7e6-f0fc321ced33"
+          },
+          "courseData": {
+            "expiryDate": "2025-09-08T06:11:30.213Z",
+            "syncedFrom": "auto_fix",
+            "purchaseDate": "2025-08-09T06:39:06.797Z",
+            "isActive": true,
+            "courseId": "restoran",
+            "transactionId": "a7b059a9-dc0d-44f3-a314-d305d9d09c00"
+          }
+        }
+      ]
+    }
+  ],
+  "fixed": [],
+  "summary": {
+    "totalIssues": 5,
+    "byType": {
+      "MISSING_IN_PURCHASED": 2,
+      "MISSING_IN_PAYMENTS": 1,
+      "INCONSISTENT_DATA": 2,
+      "ORPHANED_PAYMENTS": 0
+    },
+    "usersAffected": 2,
+    "totalCoursesMissing": 4,
+    "totalInconsistencies": 4
+  }
+}

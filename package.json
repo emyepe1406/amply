@@ -38,6 +38,7 @@
     "dotenv": "^17.2.1",
     "lucide-react": "^0.537.0",
     "next": "15.4.6",
+    "node-fetch": "^3.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.3.1"

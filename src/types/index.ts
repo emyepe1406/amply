@@ -3,7 +3,6 @@ export interface User {
   username: string;
   email?: string;
   role: 'student' | 'admin';
-  enrolledCourses: string[];
   progress: Record<string, CourseProgress>;
   purchasedCourses?: CourseAccess[]; // Array of purchased courses with 30-day expiry
 }

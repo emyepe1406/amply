@@ -259,7 +259,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-500">Courses: {student.enrolledCourses.length}</p>
+                      <p className="text-xs text-gray-500">Courses: {student.purchasedCourses?.length || 0}</p>
                       <p className="text-xs text-gray-500">Status: Active</p>
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {courses.slice(0, 5).map((course) => {
                   const enrolledCount = users.filter(u => 
-                    u.enrolledCourses.includes(course.id)
+                    u.purchasedCourses?.some((pc: any) => pc.courseId === course.id && pc.isActive)
                   ).length;
                   const completedCount = users.filter(u => 
                     u.progress?.[course.id]?.progressPercentage === 100

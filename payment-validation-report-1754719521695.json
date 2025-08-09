@@ -1,0 +1,101 @@
+{
+  "timestamp": "2025-08-09T06:05:21.534Z",
+  "totalUsers": 3,
+  "totalPayments": 8,
+  "issues": [
+    {
+      "type": "MISSING_IN_PURCHASED",
+      "userId": "user_1754638244404_3m8tzd46a",
+      "count": 1,
+      "details": [
+        {
+          "courseId": "react-fundamentals",
+          "paymentId": "payment_1754717122205_test",
+          "expiryDate": "2025-09-08T05:25:22.205Z",
+          "amount": 150000
+        }
+      ]
+    },
+    {
+      "type": "INCONSISTENT_DATA",
+      "userId": "user_1754638244404_3m8tzd46a",
+      "count": 1,
+      "details": [
+        {
+          "courseId": "react-fundamentals",
+          "paymentId": "payment_1754717122205_test",
+          "inconsistencies": [
+            "expiry_date_mismatch"
+          ],
+          "paymentData": {
+            "purchaseDate": "2025-08-09T05:25:22.205Z",
+            "currency": "IDR",
+            "orderId": "C_m8tzd46a_react-fundamentals_17122205",
+            "status": "success",
+            "transactionId": "TXN_TEST_1754717122205",
+            "isActive": true,
+            "transactionTime": "2025-08-09T05:25:22.205Z",
+            "expiryDate": "2025-09-08T05:25:22.205Z",
+            "userId": "user_1754638244404_3m8tzd46a",
+            "courseId": "react-fundamentals",
+            "amount": 150000,
+            "midtransData": {
+              "fraud_status": "accept",
+              "transaction_status": "settlement",
+              "payment_type": "bank_transfer",
+              "status_code": "200"
+            },
+            "paymentMethod": "bank_transfer",
+            "id": "payment_1754717122205_test"
+          },
+          "courseData": {
+            "expiryDate": "2025-09-08T05:27:03.265Z",
+            "purchaseDate": "2025-08-09T05:27:03.348Z",
+            "isActive": true,
+            "courseId": "react-fundamentals",
+            "transactionId": "C_m8tzd46a_react-fundamentals_17122205",
+            "paymentId": "8a172616-8c7c-4c1c-abdb-992cdba45cf9"
+          }
+        }
+      ]
+    },
+    {
+      "type": "MISSING_IN_PAYMENTS",
+      "userId": "user_1754643260339_58cgdmz05",
+      "count": 2,
+      "details": [
+        {
+          "courseId": "driver-taxi",
+          "expiryDate": "2025-09-08T06:01:29.924Z",
+          "purchaseDate": "2025-08-09T06:01:29.924Z"
+        },
+        {
+          "courseId": "driver-bis",
+          "expiryDate": "2025-09-08T06:01:30.375Z",
+          "purchaseDate": "2025-08-09T06:01:30.375Z"
+        }
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "success": true,
+      "userId": "user_1754638244404_3m8tzd46a",
+      "username": "demo",
+      "coursesAdded": 1,
+      "inconsistenciesFixed": 1
+    }
+  ],
+  "summary": {
+    "totalIssues": 3,
+    "byType": {
+      "MISSING_IN_PURCHASED": 1,
+      "MISSING_IN_PAYMENTS": 1,
+      "INCONSISTENT_DATA": 1,
+      "ORPHANED_PAYMENTS": 0
+    },
+    "usersAffected": 2,
+    "totalCoursesMissing": 1,
+    "totalInconsistencies": 1
+  }
+}

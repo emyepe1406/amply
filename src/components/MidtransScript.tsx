@@ -11,22 +11,11 @@ declare global {
 
 const MidtransScript = () => {
   useEffect(() => {
-    // Determine environment
-    const isProduction = process.env.NODE_ENV === 'production' || 
-                        window.location.hostname.includes('amplifyapp.com') ||
-                        window.location.hostname.includes('learning.kinabaruservice.info');
+    // Always use sandbox configuration
+    const snapUrl = 'https://app.sandbox.midtrans.com/snap/snap.js';
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'SB-Mid-client-gMyrpl3ZFmLE0wJG';
     
-    // Set Midtrans configuration based on environment
-    const snapUrl = isProduction 
-      ? 'https://app.midtrans.com/snap/snap.js'
-      : 'https://app.sandbox.midtrans.com/snap/snap.js';
-    
-    const clientKey = isProduction
-      ? process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'SB-Mid-client-gMyrpl3ZFmLE0wJG'
-      : 'SB-Mid-client-gMyrpl3ZFmLE0wJG';
-    
-    console.log('Midtrans Environment Detection:');
-    console.log('- Is Production:', isProduction);
+    console.log('Midtrans Sandbox Configuration:');
     console.log('- Hostname:', window.location.hostname);
     console.log('- Snap URL:', snapUrl);
     console.log('- Client Key:', clientKey);

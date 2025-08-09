@@ -68,27 +68,26 @@ class AuthManager implements AuthSession {
 
   async login(username: string, password: string): Promise<boolean> {
     try {
-      // Try to find user by email first, then by username
-      let user = await UserService.getUserByEmail(username);
-      
-      if (!user) {
-        // If not found by email, try to find by username
-        const allUsers = await UserService.getAllUsers();
-        const userWithPassword = allUsers.find(u => u.username === username);
-        if (userWithPassword) {
-          user = await UserService.getUserByEmail(userWithPassword.email || '');
+      // Use API endpoint to login and set HTTP cookie
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.user) {
+          this._user = data.user as User;
+          this._isAuthenticated = true;
+          this.saveToStorage();
+          this.notifyListeners();
+          // Start validation timer after successful login
+          this.startValidationTimer();
+          return true;
         }
-      }
-      
-      if (user && await bcrypt.compare(password, user.password)) {
-        const { password: _, ...userWithoutPassword } = user;
-        this._user = userWithoutPassword as User;
-        this._isAuthenticated = true;
-        this.saveToStorage();
-        this.notifyListeners();
-        // Start validation timer after successful login
-        this.startValidationTimer();
-        return true;
       }
       
       return false;
@@ -131,8 +130,15 @@ class AuthManager implements AuthSession {
     this.saveToStorage();
     this.notifyListeners();
     
-    // Redirect to login page
+    // Clear HTTP cookie via API
     if (typeof window !== 'undefined') {
+      fetch('/api/auth/login', {
+        method: 'DELETE',
+      }).catch(error => {
+        console.error('Error clearing auth cookie:', error);
+      });
+      
+      // Redirect to login page
       window.location.href = '/login';
     }
   }
@@ -197,14 +203,14 @@ class AuthManager implements AuthSession {
       }
     }
     
-    // Fallback to old enrollment system for backward compatibility
-    return this._user.enrolledCourses.includes(courseId);
+    // No fallback needed - only use purchasedCourses system
+    return false;
   }
 
   // Get active courses (non-expired purchased courses)
   getActiveCourses(): string[] {
     if (!this._user) return [];
-    if (this._user.role === 'admin') return this._user.enrolledCourses;
+    if (this._user.role === 'admin') return []; // Admins have access to all courses
     
     const activeCourses: string[] = [];
     const now = new Date();
@@ -221,12 +227,7 @@ class AuthManager implements AuthSession {
       });
     }
     
-    // Add enrolled courses for backward compatibility
-    this._user.enrolledCourses.forEach(courseId => {
-      if (!activeCourses.includes(courseId)) {
-        activeCourses.push(courseId);
-      }
-    });
+    // No need for backward compatibility with enrolledCourses
     
     return activeCourses;
   }
@@ -252,11 +253,6 @@ class AuthManager implements AuthSession {
           daysRemaining: daysRemaining > 0 ? daysRemaining : 0
         };
       }
-    }
-    
-    // Check enrolled courses (backward compatibility)
-    if (this._user.enrolledCourses.includes(courseId)) {
-      return { hasAccess: true };
     }
     
     return { hasAccess: false };

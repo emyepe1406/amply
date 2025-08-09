@@ -1,33 +1,17 @@
 import crypto from 'crypto';
 
-// Dynamic Midtrans Configuration based on environment
+// Midtrans Configuration - Always use Sandbox for both local and production
 const getMidtransConfig = () => {
-  const isProduction = process.env.NODE_ENV === 'production' || 
-                      process.env.NEXT_PUBLIC_BASE_URL?.includes('amplifyapp.com');
-  
-  if (isProduction) {
-    // Production configuration
-    return {
-      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || '',
-      CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || '',
-      MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || '',
-      BASE_URL: 'https://api.midtrans.com/v2',
-      SNAP_URL: 'https://app.midtrans.com/snap/v1/transactions',
-      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.learning.kinabaruservice.info/',
-      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.learning.kinabaruservice.info/'
-    };
-  } else {
-    // Sandbox configuration for local development
-    return {
-      SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-TOq1a2AVuiyhhOjvfs3U_KeO',
-      CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-nKsqvar5cn60u2Lv',
-      MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || 'G141532',
-      BASE_URL: 'https://api.sandbox.midtrans.com/v2',
-      SNAP_URL: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
-      REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-      NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-    };
-  }
+  // Always use sandbox configuration
+  return {
+    SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-TOq1a2AVuiyhhOjvfs3U_KeO',
+    CLIENT_KEY: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-nKsqvar5cn60u2Lv',
+    MERCHANT_ID: process.env.MIDTRANS_MERCHANT_ID || 'G141532',
+    BASE_URL: 'https://api.sandbox.midtrans.com/v2',
+    SNAP_URL: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
+    REDIRECT_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+    NOTIFY_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  };
 };
 
 export const MIDTRANS_CONFIG = getMidtransConfig();
@@ -78,7 +62,8 @@ export async function createSnapTransaction({
     customer_details: customerDetails,
     item_details: itemDetails,
     callbacks: {
-      finish: `${MIDTRANS_CONFIG.REDIRECT_URL}/payment/success?order_id=${orderId}`
+      finish: `${MIDTRANS_CONFIG.REDIRECT_URL}/payment/success?order_id=${orderId}`,
+      notification_url: `${MIDTRANS_CONFIG.NOTIFY_URL}/api/payment/midtrans/notify`
     }
   };
 

@@ -57,16 +57,30 @@ export async function POST(request: NextRequest) {
         const paymentService = new PaymentService();
         
         // Extract user and course info from order_id
-        // Format: COURSE_{userId}_{courseId}_{timestamp} or C_{userId}_{courseId}_{timestamp}
+        // Format: COURSE_{userIdShort}_{courseId}_{timestamp} or C_{userIdShort}_{courseId}_{timestamp}
         const orderParts = order_id.split('_');
         if (orderParts.length >= 3 && (orderParts[0] === 'COURSE' || orderParts[0] === 'C')) {
-          const userId = orderParts[1];
+          const userIdShort = orderParts[1];
           const courseId = orderParts[2];
           
-          console.log('Extracted from order_id:', { userId, courseId });
+          console.log('Extracted from order_id:', { userIdShort, courseId });
           
-          const user = await UserService.getUserById(userId);
-          console.log('User found:', user ? 'Yes' : 'No');
+          // Find user by matching the userIdShort with actual user IDs
+          // userIdShort could be:
+          // 1. Last 8 characters of a long user ID (user_timestamp_random)
+          // 2. The actual short user ID (admin-1, student-1, etc.)
+          const allUsers = await UserService.getAllUsers();
+          let user = null;
+          
+          // First try to find by exact match
+          user = allUsers.find(u => u.id === userIdShort);
+          
+          // If not found, try to find by matching last 8 characters
+          if (!user) {
+            user = allUsers.find(u => u.id.slice(-8) === userIdShort);
+          }
+          
+          console.log('User found:', user ? `Yes (${user.id})` : 'No');
           
           if (user) {
             // Calculate expiry date (30 days from now)
@@ -74,8 +88,21 @@ export async function POST(request: NextRequest) {
             expiryDate.setDate(expiryDate.getDate() + COURSE_PRICING.COURSE_ACCESS_DAYS);
             
             // Create payment record in payments table
+            const midtransData: any = {
+              transaction_status,
+              fraud_status,
+              status_code,
+              payment_type: body.payment_type
+            };
+            
+            // Only add optional fields if they exist
+            if (body.bank) midtransData.bank = body.bank;
+            if (body.va_numbers) midtransData.va_numbers = body.va_numbers;
+            if (body.biller_code) midtransData.biller_code = body.biller_code;
+            if (body.bill_key) midtransData.bill_key = body.bill_key;
+            
             const paymentData = {
-              userId,
+              userId: user.id,
               courseId,
               orderId: order_id,
               transactionId: body.transaction_id || order_id,
@@ -87,16 +114,7 @@ export async function POST(request: NextRequest) {
               purchaseDate: new Date().toISOString(),
               expiryDate: expiryDate.toISOString(),
               isActive: true,
-              midtransData: {
-                transaction_status,
-                fraud_status,
-                status_code,
-                payment_type: body.payment_type,
-                bank: body.bank,
-                va_numbers: body.va_numbers,
-                biller_code: body.biller_code,
-                bill_key: body.bill_key
-              }
+              midtransData
             };
             
             // Save payment record
@@ -137,7 +155,7 @@ export async function POST(request: NextRequest) {
             }
             
             // Update user with new course access
-            const updateResult = await UserService.updateUser(userId, {
+            const updateResult = await UserService.updateUser(user.id, {
               purchasedCourses: updatedCourses
             });
             
@@ -149,7 +167,7 @@ export async function POST(request: NextRequest) {
               message: 'Course access granted successfully'
             });
           } else {
-            console.error('User not found for userId:', userId);
+            console.error('User not found for userIdShort:', userIdShort);
             return NextResponse.json({ 
               error: 'User not found' 
             }, { status: 404 });

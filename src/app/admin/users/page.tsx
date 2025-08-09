@@ -30,7 +30,7 @@ export default function AdminUsers() {
     email: '',
     role: 'student' as 'admin' | 'student',
     password: '',
-    enrolledCourses: [] as string[]
+    purchasedCourses: [] as any[]
   });
   const router = useRouter();
 
@@ -95,7 +95,7 @@ export default function AdminUsers() {
       email: '',
       role: 'student',
       password: '',
-      enrolledCourses: []
+      purchasedCourses: []
     });
   };
 
@@ -106,7 +106,8 @@ export default function AdminUsers() {
         username: formData.username,
         email: formData.email,
         role: formData.role,
-        enrolledCourses: formData.enrolledCourses,
+        enrolledCourses: [], // Keep for backward compatibility
+        purchasedCourses: formData.purchasedCourses,
         progress: {}
       };
       
@@ -132,7 +133,7 @@ export default function AdminUsers() {
       email: userData.email || '',
       role: userData.role,
       password: '',
-      enrolledCourses: userData.enrolledCourses
+      purchasedCourses: userData.purchasedCourses || []
     });
     setShowEditModal(true);
   };
@@ -146,7 +147,7 @@ export default function AdminUsers() {
         username: formData.username,
         email: formData.email,
         role: formData.role,
-        enrolledCourses: formData.enrolledCourses,
+        purchasedCourses: formData.purchasedCourses,
         ...(formData.password && { password: formData.password })
       };
       
@@ -205,12 +206,38 @@ export default function AdminUsers() {
   };
 
   const handleCourseToggle = (courseId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      enrolledCourses: prev.enrolledCourses.includes(courseId)
-        ? prev.enrolledCourses.filter(id => id !== courseId)
-        : [...prev.enrolledCourses, courseId]
-    }));
+    const now = new Date();
+    const expiryDate = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days from now
+    
+    setFormData(prev => {
+      const purchasedCourses = Array.isArray(prev.purchasedCourses) ? prev.purchasedCourses : [];
+      const existingCourse = purchasedCourses.find(course => course.courseId === courseId);
+      
+      if (existingCourse) {
+        // Remove course
+        return {
+          ...prev,
+          purchasedCourses: purchasedCourses.filter(course => course.courseId !== courseId)
+        };
+      } else {
+        // Add course with default 30-day access
+        return {
+          ...prev,
+          purchasedCourses: [...purchasedCourses, {
+            courseId,
+            purchaseDate: now.toISOString(),
+            expiryDate: expiryDate.toISOString(),
+            isActive: true,
+            transactionId: `MANUAL_${Date.now()}`,
+            paymentId: `ADMIN_${Date.now()}`
+          }]
+        };
+      }
+    });
+  };
+  
+  const isCourseActive = (courseId: string) => {
+    return Array.isArray(formData.purchasedCourses) && formData.purchasedCourses.some(course => course.courseId === courseId);
   };
 
   const handleSelectUser = (userId: string) => {
@@ -347,9 +374,6 @@ export default function AdminUsers() {
                     Role
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Enrolled Courses
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Active Courses
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -387,9 +411,6 @@ export default function AdminUsers() {
                       }`}>
                         {userData.role}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {userData.enrolledCourses.length} courses
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
@@ -524,13 +545,13 @@ export default function AdminUsers() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Enrolled Courses</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Active Courses (30 days access)</label>
                   <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
                     {courses.map(course => (
                       <label key={course.id} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={formData.enrolledCourses.includes(course.id)}
+                          checked={isCourseActive(course.id)}
                           onChange={() => handleCourseToggle(course.id)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
@@ -627,13 +648,13 @@ export default function AdminUsers() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Enrolled Courses</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Active Courses (30 days access)</label>
                   <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
                     {courses.map(course => (
                       <label key={course.id} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={formData.enrolledCourses.includes(course.id)}
+                          checked={isCourseActive(course.id)}
                           onChange={() => handleCourseToggle(course.id)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />

@@ -41,12 +41,17 @@ export default function AdminAnalytics() {
           return courseAccess.isActive && expiryDate > now;
         });
       }
-      // Fallback to enrolled courses for backward compatibility
-      return u.enrolledCourses.length > 0;
+      // No fallback needed - only use purchasedCourses system
+      return false;
     }).length;
 
     const courseEnrollments = courses.map(course => {
-      const enrolled = users.filter(u => u.enrolledCourses.includes(course.id)).length;
+      const enrolled = users.filter(u => {
+        if (u.purchasedCourses) {
+          return u.purchasedCourses.some(pc => pc.courseId === course.id);
+        }
+        return false;
+      }).length;
       const completed = users.filter(u => 
         u.progress?.[course.id]?.progressPercentage === 100
       ).length;
@@ -69,7 +74,12 @@ export default function AdminAnalytics() {
         acc[category] = { enrolled: 0, completed: 0 };
       }
       
-      const enrolled = users.filter(u => u.enrolledCourses.includes(course.id)).length;
+      const enrolled = users.filter(u => {
+        if (u.purchasedCourses) {
+          return u.purchasedCourses.some(pc => pc.courseId === course.id);
+        }
+        return false;
+      }).length;
       const completed = users.filter(u => 
         u.progress?.[course.id]?.progressPercentage === 100
       ).length;

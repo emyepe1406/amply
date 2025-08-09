@@ -7,18 +7,16 @@ export const users: User[] = [
     username: 'admin',
     email: 'admin@kinabaru.com',
     role: 'admin',
-    enrolledCourses: [],
     progress: {},
-
+    purchasedCourses: []
   },
   {
     id: 'admin-2',
     username: 'superadmin',
     email: 'superadmin@kinabaru.com',
     role: 'admin',
-    enrolledCourses: [],
     progress: {},
-
+    purchasedCourses: []
   },
   
   // Student users
@@ -27,7 +25,6 @@ export const users: User[] = [
     username: 'tri_hartarto',
     email: 'tri.hartarto@email.com',
     role: 'student',
-    enrolledCourses: ['driver-truk', 'driver-bis'],
     progress: {
       'driver-truk': {
         courseId: 'driver-truk',
@@ -38,14 +35,28 @@ export const users: User[] = [
         progressPercentage: 50
       }
     },
-
+    purchasedCourses: [
+      {
+        courseId: 'driver-truk',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_001'
+      },
+      {
+        courseId: 'driver-bis',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_002'
+      }
+    ]
   },
   {
     id: 'student-2',
     username: 'andri_suwanto',
     email: 'andri.suwanto@email.com',
     role: 'student',
-    enrolledCourses: ['driver-truk'],
     progress: {
       'driver-truk': {
         courseId: 'driver-truk',
@@ -65,14 +76,22 @@ export const users: User[] = [
         lastAccessed: '2025-01-10',
         progressPercentage: 100
       }
-    }
+    },
+    purchasedCourses: [
+      {
+        courseId: 'driver-truk',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_003'
+      }
+    ]
   },
   {
     id: 'student-3',
     username: 'dahsyat_persada',
     email: 'dahsyat.persada@email.com',
     role: 'student',
-    enrolledCourses: ['driver-truk', 'seibi'],
     progress: {
       'driver-truk': {
         courseId: 'driver-truk',
@@ -82,14 +101,29 @@ export const users: User[] = [
         lastAccessed: '2025-01-12',
         progressPercentage: 75
       }
-    }
+    },
+    purchasedCourses: [
+      {
+        courseId: 'driver-truk',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_004'
+      },
+      {
+        courseId: 'seibi',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_005'
+      }
+    ]
   },
   {
     id: 'student-4',
     username: 'demo',
     email: 'demo@student.com',
     role: 'student',
-    enrolledCourses: ['driver-bis', 'driver-taxi', 'restoran'],
     progress: {
       'driver-bis': {
         courseId: 'driver-bis',
@@ -99,15 +133,53 @@ export const users: User[] = [
         lastAccessed: '2025-01-14',
         progressPercentage: 33
       }
-    }
+    },
+    purchasedCourses: [
+      {
+        courseId: 'driver-bis',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_006'
+      },
+      {
+        courseId: 'driver-taxi',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_007'
+      },
+      {
+        courseId: 'restoran',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_008'
+      }
+    ]
   },
   {
     id: 'student-5',
     username: 'test_user',
     email: 'test@user.com',
     role: 'student',
-    enrolledCourses: ['ground-handling', 'building-cleaning'],
-    progress: {}
+    progress: {},
+    purchasedCourses: [
+      {
+        courseId: 'ground-handling',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_009'
+      },
+      {
+        courseId: 'building-cleaning',
+        purchaseDate: '2025-01-01T00:00:00.000Z',
+        expiryDate: '2025-01-31T23:59:59.999Z',
+        isActive: true,
+        transactionId: 'DEMO_010'
+      }
+    ]
   }
 ];
 

@@ -8,8 +8,8 @@ export interface User {
   username: string;
   email?: string;
   role: 'admin' | 'student' | 'instructor';
-  enrolledCourses?: string[];
   expiryDate?: string;
+  purchasedCourses?: any[];
 }
 
 export function useAuth() {
@@ -40,8 +40,6 @@ export function useAuth() {
           username: foundUser.username,
           email: foundUser.email,
           role: foundUser.role,
-          enrolledCourses: foundUser.enrolledCourses,
-          progress: foundUser.progress,
           purchasedCourses: foundUser.purchasedCourses,
         };
         
@@ -69,7 +67,8 @@ export function useAuth() {
   const canAccessCourse = (courseId: string): boolean => {
     if (!user) return false;
     if (user.role === 'admin') return true;
-    return user.enrolledCourses?.includes(courseId) || false;
+    // Use authManager's hasAccessToCourse method for proper course access checking
+    return false; // This hook is deprecated, use authManager directly
   };
 
   return {
