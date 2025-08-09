@@ -4,7 +4,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 // AWS Configuration
 // Use AMPLIFY_ prefix for environment variables to avoid AWS prefix restriction
-const AWS_REGION = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
+const AWS_REGION = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'ap-southeast-1';
 const AWS_ACCESS_KEY_ID = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
 

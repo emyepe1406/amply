@@ -171,7 +171,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Link
             href="/admin/users"
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
@@ -195,6 +195,19 @@ export default function AdminDashboard() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Courses</h3>
               <p className="text-sm text-gray-600">Create and edit courses</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/transactions"
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-credit-card text-orange-600 text-xl"></i>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Transactions</h3>
+              <p className="text-sm text-gray-600">View payment history</p>
             </div>
           </Link>
 

@@ -1,29 +1,29 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 class PaymentService {
   constructor() {
-    // Use environment-specific AWS credentials
-    const isProduction = process.env.NODE_ENV === 'production' || 
-                        (typeof window === 'undefined' && process.env.NEXT_PUBLIC_BASE_URL?.includes('amplifyapp.com'));
+    // AWS Configuration - prioritize AMPLIFY_AWS_ credentials
+    const awsRegion = process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'ap-southeast-1';
+    const awsAccessKeyId = process.env.AMPLIFY_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+    const awsSecretAccessKey = process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
     
-    const credentials = isProduction ? {
-      accessKeyId: process.env.AMPLIFY_AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY,
-    } : {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    };
-
+    // Use different table names based on environment
+    const isProduction = process.env.NODE_ENV === 'production';
+    const defaultTableName = isProduction ? 'lms-payments-prod' : 'lms-payments';
+    
     const client = new DynamoDBClient({
-      region: process.env.AMPLIFY_AWS_REGION || process.env.AWS_REGION || 'us-east-1',
-      credentials,
+      region: awsRegion,
+      credentials: {
+        accessKeyId: awsAccessKeyId,
+        secretAccessKey: awsSecretAccessKey
+      }
     });
-    
-    this.docClient = DynamoDBDocumentClient.from(client);
-    this.tableName = process.env.DYNAMODB_PAYMENTS_TABLE || 'lms-payments';
-  }
+     
+     this.docClient = DynamoDBDocumentClient.from(client);
+     this.tableName = process.env.DYNAMODB_PAYMENTS_TABLE || defaultTableName;
+   }
 
   // Create a new payment record
   async createPayment(paymentData) {
@@ -108,7 +108,7 @@ class PaymentService {
   async getPaymentsByUserId(userId) {
     const command = new QueryCommand({
       TableName: this.tableName,
-      IndexName: 'UserIdIndex',
+      IndexName: 'userId-index',
       KeyConditionExpression: 'userId = :userId',
       ExpressionAttributeValues: {
         ':userId': userId,
@@ -168,7 +168,7 @@ class PaymentService {
   async getSuccessfulPaymentsByUserId(userId) {
     const command = new QueryCommand({
       TableName: this.tableName,
-      IndexName: 'UserIdIndex',
+      IndexName: 'userId-index',
       KeyConditionExpression: 'userId = :userId',
       FilterExpression: '#status = :status',
       ExpressionAttributeNames: {
@@ -186,6 +186,21 @@ class PaymentService {
       return result.Items || [];
     } catch (error) {
       console.error('Error getting successful payments by user ID:', error);
+      throw error;
+    }
+  }
+
+  // Get all payments (for admin)
+  async getAllPayments() {
+    const command = new ScanCommand({
+      TableName: this.tableName,
+    });
+
+    try {
+      const result = await this.docClient.send(command);
+      return result.Items || [];
+    } catch (error) {
+      console.error('Error getting all payments:', error);
       throw error;
     }
   }

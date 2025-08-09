@@ -102,20 +102,15 @@ export default function Footer() {
               © 2025 Kinabaru E-Learning. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
-                Kebijakan Privasi
+              <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">
+                FAQ
+              </Link>
+              <Link href="/return-policy" className="text-gray-400 hover:text-white transition-colors">
+                Return Policy
               </Link>
               <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
                 Syarat & Ketentuan
               </Link>
-              <a
-                href="https://wa.me/628970061990?text=Hallo%20admin%2C%20saya%20ingin%20membeli%20akses%20untuk%20kursus%20di%20ssw%20learning%20kinabaru"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Hubungi Admin
-              </a>
             </div>
           </div>
         </div>

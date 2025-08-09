@@ -16,7 +16,14 @@
     "deploy-setup": "npm run validate-env && npm run setup-prod-tables && npm run setup-s3",
     "amplify-init": "npx amplify init",
     "amplify-publish": "npx amplify publish",
-    "deploy-full": "npm run test-prod-build && npm run deploy-setup && npm run amplify-publish"
+    "deploy-full": "npm run test-prod-build && npm run deploy-setup && npm run amplify-publish",
+    "payment-sync": "node scripts/migrate-payments-sync.js",
+    "payment-validate": "node scripts/validate-payment-sync.js",
+    "payment-cron": "node scripts/cron-sync-payments.js",
+    "payment-cron-sync": "node scripts/cron-sync-payments.js sync",
+    "payment-cron-validate": "node scripts/cron-sync-payments.js validate",
+    "payment-cron-health": "node scripts/cron-sync-payments.js health",
+    "payment-fix": "node scripts/validate-payment-sync.js --fix"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.863.0",

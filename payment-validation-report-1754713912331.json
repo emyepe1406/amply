@@ -1,0 +1,144 @@
+{
+  "timestamp": "2025-08-09T04:31:52.204Z",
+  "totalUsers": 5,
+  "totalPayments": 7,
+  "issues": [
+    {
+      "type": "ORPHANED_PAYMENTS",
+      "count": 5,
+      "payments": [
+        {
+          "purchaseDate": "2024-01-15T10:30:00.000Z",
+          "currency": "IDR",
+          "orderId": "C_abc123de_react-fundamentals_12345678",
+          "status": "success",
+          "createdAt": "2025-08-08T20:30:43.163Z",
+          "transactionId": "TXN_001_2024",
+          "isActive": true,
+          "transactionTime": "2024-01-15 10:30:00",
+          "expiryDate": "2024-02-14T10:30:00.000Z",
+          "userId": "user_1704067200000_abc123def",
+          "updatedAt": "2025-08-08T20:30:43.163Z",
+          "courseId": "react-fundamentals",
+          "amount": 150000,
+          "midtransData": {
+            "fraud_status": "accept",
+            "transaction_status": "settlement",
+            "payment_type": "bank_transfer",
+            "bank": "bca",
+            "status_code": "200"
+          },
+          "paymentMethod": "bank_transfer",
+          "id": "06b6217f-497f-488a-943a-729841f00cd8"
+        },
+        {
+          "purchaseDate": "2024-01-18T16:45:00.000Z",
+          "currency": "IDR",
+          "orderId": "C_jkl012mn_node-backend_55667788",
+          "status": "pending",
+          "createdAt": "2025-08-08T20:30:43.312Z",
+          "transactionId": "TXN_004_2024",
+          "isActive": false,
+          "transactionTime": "2024-01-18 16:45:00",
+          "expiryDate": "2024-02-17T16:45:00.000Z",
+          "userId": "user_1704067200000_jkl012mno",
+          "updatedAt": "2025-08-08T20:30:43.312Z",
+          "courseId": "node-backend",
+          "amount": 150000,
+          "midtransData": {
+            "fraud_status": "accept",
+            "transaction_status": "pending",
+            "payment_type": "bank_transfer",
+            "bank": "bni",
+            "status_code": "201"
+          },
+          "paymentMethod": "bank_transfer",
+          "id": "86cadc2e-4fff-4a60-8d41-d5f374c2c326"
+        },
+        {
+          "purchaseDate": "2024-01-17T09:15:00.000Z",
+          "currency": "IDR",
+          "orderId": "C_ghi789jk_python-basics_11223344",
+          "status": "success",
+          "createdAt": "2025-08-08T20:30:43.290Z",
+          "transactionId": "TXN_003_2024",
+          "isActive": true,
+          "transactionTime": "2024-01-17 09:15:00",
+          "expiryDate": "2024-02-16T09:15:00.000Z",
+          "userId": "user_1704067200000_ghi789jkl",
+          "updatedAt": "2025-08-08T20:30:43.290Z",
+          "courseId": "python-basics",
+          "amount": 150000,
+          "midtransData": {
+            "fraud_status": "accept",
+            "transaction_status": "settlement",
+            "payment_type": "gopay",
+            "status_code": "200"
+          },
+          "paymentMethod": "gopay",
+          "id": "0049b412-cf96-4500-a089-37b7d0a24d20"
+        },
+        {
+          "purchaseDate": "2024-01-16T14:20:00.000Z",
+          "currency": "IDR",
+          "orderId": "C_def456gh_javascript-advanced_87654321",
+          "status": "success",
+          "createdAt": "2025-08-08T20:30:43.266Z",
+          "transactionId": "TXN_002_2024",
+          "isActive": true,
+          "transactionTime": "2024-01-16 14:20:00",
+          "expiryDate": "2024-02-15T14:20:00.000Z",
+          "userId": "user_1704067200000_def456ghi",
+          "updatedAt": "2025-08-08T20:30:43.266Z",
+          "courseId": "javascript-advanced",
+          "amount": 150000,
+          "midtransData": {
+            "fraud_status": "accept",
+            "transaction_status": "capture",
+            "payment_type": "credit_card",
+            "bank": "mandiri",
+            "status_code": "200"
+          },
+          "paymentMethod": "credit_card",
+          "id": "81b0436b-250b-4d60-8b8e-9f2d69918cf9"
+        },
+        {
+          "purchaseDate": "2024-01-19T11:30:00.000Z",
+          "currency": "IDR",
+          "orderId": "C_abc123de_react-fundamentals_99887766",
+          "status": "success",
+          "createdAt": "2025-08-08T20:30:43.334Z",
+          "transactionId": "TXN_005_2024",
+          "isActive": true,
+          "transactionTime": "2024-01-19 11:30:00",
+          "expiryDate": "2024-02-18T11:30:00.000Z",
+          "userId": "user_1704067200000_abc123def",
+          "updatedAt": "2025-08-08T20:30:43.334Z",
+          "courseId": "react-fundamentals",
+          "amount": 150000,
+          "midtransData": {
+            "fraud_status": "accept",
+            "transaction_status": "settlement",
+            "payment_type": "dana",
+            "status_code": "200"
+          },
+          "paymentMethod": "dana",
+          "id": "17309122-4f78-41fb-a15f-5ba34c679614"
+        }
+      ]
+    }
+  ],
+  "fixed": [],
+  "summary": {
+    "totalIssues": 1,
+    "byType": {
+      "MISSING_IN_PURCHASED": 0,
+      "MISSING_IN_PAYMENTS": 0,
+      "INCONSISTENT_DATA": 0,
+      "ORPHANED_PAYMENTS": 1
+    },
+    "usersAffected": 1,
+    "totalCoursesMissing": 0,
+    "totalInconsistencies": 0
+  }
+}

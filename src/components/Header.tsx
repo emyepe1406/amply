@@ -5,6 +5,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { authManager } from '@/lib/auth';
 import { User } from '@/types';
+import { courses } from '@/data/courses';
+import { COURSE_PRICING } from '@/lib/midtrans';
+import { X } from 'lucide-react';
+
+interface CartItem {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+}
 
 interface HeaderProps {
   showNavigation?: boolean;
@@ -14,11 +24,96 @@ export default function Header({ showNavigation = true }: HeaderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
     setUser(authManager.user);
     const unsubscribe = authManager.subscribe(setUser);
     return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    loadCartItems();
+  }, [user]);
+
+  const loadCartItems = () => {
+    if (typeof window !== 'undefined' && user) {
+      const cart = localStorage.getItem(`cart_${user.id}`);
+      if (cart) {
+        try {
+          const items = JSON.parse(cart);
+          // Convert cart items from {courseId, addedAt} format to {id, title, price, image} format
+          const validItems = items
+            .filter((item: any) => item && typeof item.courseId === 'string')
+            .map((item: any) => {
+              const course = courses.find(c => c.id === item.courseId);
+              if (!course) return null;
+              
+              return {
+                id: course.id,
+                title: course.title,
+                price: COURSE_PRICING.PER_COURSE,
+                image: course.logo
+              };
+            })
+            .filter(Boolean) as CartItem[];
+          
+          setCartItems(validItems);
+          const total = validItems.reduce((sum: number, item: CartItem) => sum + (item.price || 0), 0);
+          setCartTotal(total);
+        } catch (error) {
+          console.error('Error parsing cart data:', error);
+          setCartItems([]);
+          setCartTotal(0);
+        }
+      } else {
+        setCartItems([]);
+        setCartTotal(0);
+      }
+    }
+  };
+
+  const removeFromCart = (courseId: string) => {
+    if (!user) return;
+    
+    const cart = localStorage.getItem(`cart_${user.id}`);
+    if (cart) {
+      try {
+        const items = JSON.parse(cart);
+        const updatedItems = items.filter((item: any) => item.courseId !== courseId);
+        localStorage.setItem(`cart_${user.id}`, JSON.stringify(updatedItems));
+        
+        // Trigger cart update event
+        window.dispatchEvent(new Event('cartUpdated'));
+        
+        // Reload cart items
+        loadCartItems();
+      } catch (error) {
+        console.error('Error removing item from cart:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadCartItems();
+    
+    // Listen for storage changes to update cart when items are added from other pages
+    const handleStorageChange = () => loadCartItems();
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom cart update events
+    const handleCartUpdate = () => loadCartItems();
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    // Refresh cart every 2 seconds to ensure sync
+    const interval = setInterval(loadCartItems, 2000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -68,6 +163,86 @@ export default function Header({ showNavigation = true }: HeaderProps) {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
+            {/* Cart Icon */}
+            {user && (
+              <div className="relative group">
+                <Link href="/cart" className="text-gray-700 hover:text-blue-600 transition-colors flex items-center p-2 relative">
+                  <i className="fas fa-shopping-cart text-lg"></i>
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </Link>
+                
+                {/* Cart Dropdown */}
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-semibold text-gray-900">Keranjang Belanja</h3>
+                      {cartItems.length > 0 && (
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                          {cartItems.length} item
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                      {cartItems.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          <i className="fas fa-shopping-cart text-3xl mb-2 opacity-50"></i>
+                          <p>Keranjang kosong</p>
+                        </div>
+                      ) : (
+                        cartItems.map((item) => (
+                          <div key={item.id} className="flex items-center space-x-3 p-2 border rounded-lg group">
+                            <img 
+                              src={item.image} 
+                              alt={item.title}
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
+                              <p className="text-sm text-blue-600 font-semibold">
+                                Rp {item.price ? item.price.toLocaleString('id-ID') : '0'}
+                              </p>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                removeFromCart(item.id);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 rounded-full text-red-500 hover:text-red-700"
+                              title="Hapus dari keranjang"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    
+                    {cartItems.length > 0 && (
+                      <>
+                        <div className="border-t pt-3 mt-3">
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="font-semibold text-gray-900">Total:</span>
+                            <span className="font-bold text-blue-600">
+                              Rp {cartTotal ? cartTotal.toLocaleString('id-ID') : '0'}
+                            </span>
+                          </div>
+                          <Link href="/cart" className="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Lihat Keranjang
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {user ? (
               <div className="relative">
                 <button
@@ -107,6 +282,14 @@ export default function Header({ showNavigation = true }: HeaderProps) {
                     >
                       <i className="fas fa-user mr-2"></i>
                       Profil
+                    </Link>
+                    <Link
+                      href="/cart"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <i className="fas fa-shopping-cart mr-2"></i>
+                      Keranjang
                     </Link>
                     {user.role === 'admin' && (
                       <Link

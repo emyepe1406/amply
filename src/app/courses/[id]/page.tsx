@@ -22,7 +22,7 @@ export default function CourseDetailPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [purchasingCourse, setPurchasingCourse] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'overview' | 'chapters' | 'requirements'>('overview');
 
   useEffect(() => {
@@ -77,62 +77,46 @@ export default function CourseDetailPage() {
     }
   };
 
-  const handlePurchaseClick = () => {
-    handlePurchaseCourse();
-  };
-
-  const handlePurchaseCourse = async () => {
+  const handleAddToCart = () => {
     if (!user || !course) {
       router.push('/login');
       return;
     }
 
-    setPurchasingCourse(true);
+    // Get existing cart
+    const existingCart = localStorage.getItem(`cart_${user.id}`);
+    let cartItems = [];
+    
     try {
-      const response = await fetch('/api/payment/midtrans/course/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          courseId: course.id,
-          userId: user.id,
-          userEmail: user.email || `${user.username}@example.com`,
-          userName: user.username
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success && data.data?.token) {
-        // Use Midtrans Snap
-        // @ts-ignore
-        window.snap.pay(data.data.token, {
-          onSuccess: function(result: any) {
-            console.log('Payment success:', result);
-            window.location.href = `/payment/success?order_id=${data.data.orderId}`;
-          },
-          onPending: function(result: any) {
-            console.log('Payment pending:', result);
-            alert('Pembayaran sedang diproses');
-          },
-          onError: function(result: any) {
-            console.log('Payment error:', result);
-            alert('Terjadi kesalahan saat memproses pembayaran');
-          },
-          onClose: function() {
-            console.log('Payment popup closed');
-          }
-        });
-      } else {
-        alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-      }
+      cartItems = existingCart ? JSON.parse(existingCart) : [];
     } catch (error) {
-      console.error('Error creating payment:', error);
-      alert('Terjadi kesalahan saat memproses pembayaran');
-    } finally {
-      setPurchasingCourse(false);
+      console.error('Error parsing cart:', error);
+      cartItems = [];
     }
+
+    // Check if course is already in cart
+    const isAlreadyInCart = cartItems.some((item: any) => item.courseId === course.id);
+    
+    if (isAlreadyInCart) {
+      // If already in cart, go directly to cart
+      router.push('/cart');
+      return;
+    }
+
+    // Add course to cart
+    const newItem = {
+      courseId: course.id,
+      addedAt: new Date().toISOString()
+    };
+    
+    cartItems.push(newItem);
+    localStorage.setItem(`cart_${user.id}`, JSON.stringify(cartItems));
+    
+    // Trigger cart update event
+    window.dispatchEvent(new Event('cartUpdated'));
+    
+    // Redirect to cart
+    router.push('/cart');
   };
 
   const getCourseStatus = () => {
@@ -250,7 +234,7 @@ export default function CourseDetailPage() {
                        }).format(COURSE_PRICING.PER_COURSE)}
                      </div>
                     <div className="text-blue-200">
-                       <div className="text-sm">Akses Penuh</div>
+                       <div className="text-sm">30 Hari</div>
                        <div className="text-xs">Sekali Bayar</div>
                      </div>
                   </div>
@@ -306,36 +290,17 @@ export default function CourseDetailPage() {
                       default:
                         return (
                           <button
-                            onClick={handlePurchaseClick}
-                            disabled={purchasingCourse}
-                            className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-yellow-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={handleAddToCart}
+                            className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-yellow-300 transition-colors flex items-center justify-center"
                           >
-                            {purchasingCourse ? (
-                              <>
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-900 mr-2"></div>
-                                Memproses...
-                              </>
-                            ) : (
-                              <>
-                                <i className="fas fa-shopping-cart mr-2"></i>
-                                Beli Kursus
-                              </>
-                            )}
+                            <i className="fas fa-shopping-cart mr-2"></i>
+                            Tambah ke Keranjang
                           </button>
                         );
                     }
                   })()}
                   
-                  {/* Preview Button - Always available */}
-                  {course.chapters.length > 0 && (
-                    <Link
-                      href={`/courses/${course.id}/chapters/${course.chapters[0].id}?preview=true`}
-                      className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center"
-                    >
-                      <i className="fas fa-eye mr-2"></i>
-                      Preview Gratis
-                    </Link>
-                  )}
+
                 </div>
               </div>
               
@@ -591,7 +556,7 @@ export default function CourseDetailPage() {
                         minimumFractionDigits: 0,
                       }).format(COURSE_PRICING.PER_COURSE)}
                     </div>
-                    <div className="text-sm text-gray-600 mb-4">Akses Penuh • Sekali Bayar</div>
+                    <div className="text-sm text-gray-600 mb-4">30 Hari • Sekali Bayar</div>
                     
                     {(() => {
                       const status = getCourseStatus();
@@ -607,21 +572,11 @@ export default function CourseDetailPage() {
                       } else if (status === 'purchase') {
                         return (
                           <button
-                            onClick={handlePurchaseClick}
-                            disabled={purchasingCourse}
-                            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={handleAddToCart}
+                            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                           >
-                            {purchasingCourse ? (
-                              <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2 inline-block"></div>
-                                Memproses...
-                              </>
-                            ) : (
-                              <>
-                                <i className="fas fa-shopping-cart mr-2"></i>
-                                Beli Sekarang
-                              </>
-                            )}
+                            <i className="fas fa-shopping-cart mr-2"></i>
+                            Tambah ke Keranjang
                           </button>
                         );
                       } else {

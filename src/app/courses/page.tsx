@@ -23,7 +23,7 @@ export default function CoursesPage() {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [purchasingCourse, setPurchasingCourse] = useState<string | null>(null);
+
   const [user, setUser] = useState(authManager.user);
 
   // Fetch courses from database
@@ -63,8 +63,8 @@ export default function CoursesPage() {
     fetchCourses();
   }, []);
 
-  // Handle course purchase
-  const handlePurchaseCourse = async (courseId: string) => {
+  // Handle add to cart
+  const handleAddToCart = (courseId: string) => {
     if (!user) {
       router.push('/login');
       return;
@@ -77,53 +77,40 @@ export default function CoursesPage() {
       return;
     }
 
-    setPurchasingCourse(courseId);
+    // Get existing cart
+    const existingCart = localStorage.getItem(`cart_${user.id}`);
+    let cartItems = [];
     
     try {
-      const response = await fetch('/api/payment/midtrans/course/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          userEmail: user.email || `${user.username}@example.com`,
-          userName: user.username,
-          courseId
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success && data.data?.token) {
-        // Use Midtrans Snap
-        // @ts-ignore
-        window.snap.pay(data.data.token, {
-          onSuccess: function(result: any) {
-            console.log('Payment success:', result);
-            window.location.href = `/payment/success?order_id=${data.data.orderId}`;
-          },
-          onPending: function(result: any) {
-            console.log('Payment pending:', result);
-            alert('Pembayaran sedang diproses');
-          },
-          onError: function(result: any) {
-            console.log('Payment error:', result);
-            alert('Terjadi kesalahan saat memproses pembayaran');
-          },
-          onClose: function() {
-            console.log('Payment popup closed');
-          }
-        });
-      } else {
-        alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-      }
+      cartItems = existingCart ? JSON.parse(existingCart) : [];
     } catch (error) {
-      console.error('Error creating payment:', error);
-      alert('Terjadi kesalahan saat memproses pembayaran');
-    } finally {
-      setPurchasingCourse(null);
+      console.error('Error parsing cart:', error);
+      cartItems = [];
     }
+
+    // Check if course is already in cart
+    const isAlreadyInCart = cartItems.some((item: any) => item.courseId === courseId);
+    
+    if (isAlreadyInCart) {
+      // If already in cart, go directly to cart
+      router.push('/cart');
+      return;
+    }
+
+    // Add course to cart
+    const newItem = {
+      courseId,
+      addedAt: new Date().toISOString()
+    };
+    
+    cartItems.push(newItem);
+    localStorage.setItem(`cart_${user.id}`, JSON.stringify(cartItems));
+    
+    // Trigger cart update event
+    window.dispatchEvent(new Event('cartUpdated'));
+    
+    // Redirect to cart
+    router.push('/cart');
   };
 
   // Get course status for user
@@ -312,7 +299,7 @@ export default function CoursesPage() {
                               }).format(COURSE_PRICING.PER_COURSE)}
                             </div>
                             <div className="text-sm text-gray-500">
-                              Akses Penuh
+                              30 Hari
                             </div>
                           </div>
                         </div>
@@ -332,10 +319,11 @@ export default function CoursesPage() {
                                     Login untuk Membeli
                                   </button>
                                   <Link
-                                    href={`/courses/${course.id}/preview`}
+                                    href={`/courses/${course.id}`}
                                     className="block w-full border border-blue-600 text-blue-600 text-center py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors font-medium"
                                   >
-                                    Preview Gratis
+                                    <i className="fas fa-info-circle mr-2"></i>
+                                    Lihat Detail
                                   </Link>
                                 </div>
                               );
@@ -381,27 +369,18 @@ export default function CoursesPage() {
                             return (
                               <div className="space-y-3">
                                 <button
-                                  onClick={() => handlePurchaseCourse(course.id)}
-                                  disabled={purchasingCourse === course.id}
-                                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                  onClick={() => handleAddToCart(course.id)}
+                                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                                 >
-                                  {purchasingCourse === course.id ? (
-                                    <>
-                                      <i className="fas fa-spinner fa-spin mr-2"></i>
-                                      Memproses...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <i className="fas fa-shopping-cart mr-2"></i>
-                                      Beli Kursus
-                                    </>
-                                  )}
+                                  <i className="fas fa-shopping-cart mr-2"></i>
+                                  Tambah ke Keranjang
                                 </button>
                                 <Link
-                                  href={`/courses/${course.id}/preview`}
+                                  href={`/courses/${course.id}`}
                                   className="block w-full border border-blue-600 text-blue-600 text-center py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors font-medium"
                                 >
-                                  Preview Gratis
+                                  <i className="fas fa-info-circle mr-2"></i>
+                                  Lihat Detail
                                 </Link>
                               </div>
                             );
